@@ -6,4 +6,8 @@
 - 초안 작성 완료: `_posts/2026-07-23-2026-ai-agent-trends-and-antigravity.md` 생성.
 - 검수 점수: 95점 / 100점 (키워드 밀도, 코드블록, Jekyll 프론트매터 모두 통과).
 - Git 커밋 완료: `feat: add post 2026-07-23-2026-ai-agent-trends-and-antigravity.md`.
-- 일일 자동 배포(Daily Scheduling) 구성을 위한 옵션 정리 (1. Antigravity `/schedule` 예약 기능, 2. GitHub Actions CI/CD 기반 완전 자동화).
+- 매일 자동 블로그 포스팅을 위해 **방법 2 (GitHub Actions 서버리스 자동화)** 구축을 결정하였습니다.
+- `.github/workflows/daily_blog_post.yml` 및 `scripts/generate_post.py` 파일 생성 후 커밋 완료.
+- 사용자 깃허브 Secrets `GEMINI_API_KEY` 설정 완료 확인.
+- 사용자 PAT에 `workflow` 권한 추가 후 `git push` 실행하여 원격 레포지토리 `main` 브랜치로 최종 반영 성공.
+- 깃허브 원격 URL 보안 정돈 처리 완료.

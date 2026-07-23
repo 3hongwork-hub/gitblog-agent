@@ -1,13 +1,60 @@
-# Gemini API를 활용해 daily 블로그 포스트 마크다운 파일을 자율 생성하는 파이프라인 스크립트
+# Gemini API를 활용해 daily 블로그 포스트 마크다운 파일 생성 및 README.md 목록을 자동 업데이트하는 스크립트
 import datetime
+import glob
 import json
 import os
+import re
 import urllib.request
+
+def update_readme():
+    posts = []
+    post_files = glob.glob("_posts/*.md")
+    post_files.sort(reverse=True)
+
+    for filepath in post_files:
+        filename = os.path.basename(filepath)
+        date_match = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
+        date_str = date_match.group(1) if date_match else ""
+        
+        title = filename
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read()
+            title_match = re.search(r'title:\s*["\']?(.*?)["\']?\s*\n', content)
+            if title_match:
+                title = title_match.group(1).strip()
+        
+        rel_link = f"_posts/{filename}"
+        posts.append({"date": date_str, "title": title, "link": rel_link})
+
+    table_rows = []
+    for p in posts:
+        table_rows.append(f"| {p['date']} | {p['title']} | [{p['title']}]({p['link']}) |")
+
+    table_content = "\n".join(table_rows) if table_rows else "| - | 포스트가 없습니다. | - |"
+
+    readme_text = f"""# 🤖 GitBlog Agent - 자율 콘텐츠 배포 블로그
+
+안티그래비티(Antigravity) 및 Gemini 모델, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
+
+## 📝 발행된 포스트 목록 (최신순)
+
+| 작성일 | 제목 | 링크 |
+| :--- | :--- | :--- |
+{table_content}
+
+---
+*이 레포지토리의 블로그 포스트 및 목록은 GitHub Actions에 의해 매일 자동으로 업데이트됩니다.*
+"""
+
+    with open("README.md", "w", encoding="utf-8") as f:
+        f.write(readme_text.strip() + "\n")
+    print("Successfully updated README.md")
 
 def generate_blog_post():
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     if not api_key:
-        print("Error: GEMINI_API_KEY environment variable is missing.")
+        print("Notice: GEMINI_API_KEY missing in local run. Updating README for existing posts.")
+        update_readme()
         return
 
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
@@ -63,6 +110,8 @@ def generate_blog_post():
 
     except Exception as e:
         print(f"Failed to generate content: {e}")
+
+    update_readme()
 
 if __name__ == "__main__":
     generate_blog_post()
