@@ -10,4 +10,4 @@
 - `.github/workflows/daily_blog_post.yml` 및 `scripts/generate_post.py` 파일 생성 후 커밋 완료.
 - 사용자 깃허브 Secrets `GEMINI_API_KEY` 설정 완료 확인.
 - 사용자 PAT에 `workflow` 권한 추가 후 `git push` 실행하여 원격 레포지토리 `main` 브랜치로 최종 반영 성공.
-- 깃허브 원격 URL 보안 정돈 처리 완료.
+- 사용자의 요청에 따라 `README.md` 생성 및 매일 글 작성 시 `README.md` 내 최신 글 목록(작성일자, 제목, 링크 표)을 자율 갱신하도록 `scripts/generate_post.py` 개선 후 푸시 완료.

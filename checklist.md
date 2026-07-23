@@ -8,3 +8,4 @@
 - [x] GitHub Actions 매일 자율 포스팅 파일 생성 및 커밋 (`.github/workflows/daily_blog_post.yml`, `scripts/generate_post.py`)
 - [x] 사용자 깃허브 Repository Secrets에 `GEMINI_API_KEY` 등록 완료
 - [x] 원격 레포지토리 푸시 완료 (`3hongwork-hub/gitblog-agent` main 브랜치)
+- [x] `README.md` 자동 업데이트 기능 추가 및 깃허브 푸시 완료
