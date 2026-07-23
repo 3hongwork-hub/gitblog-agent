@@ -1,4 +1,4 @@
-# 콘텐츠 자율 배포 루프 구축 체크리스트
+# 콘텐츠 자율 배포 루크 구축 체크리스트
 
 - [x] 구현 계획(Implementation Plan) 확인 및 사용자 승인
 - [x] `marketing_agent_task.md` 지시서 파일 작성 (대상 레포: `3hongwork-hub/gitblog-agent`)
@@ -9,3 +9,5 @@
 - [x] 사용자 깃허브 Repository Secrets에 `GEMINI_API_KEY` 등록 완료
 - [x] 원격 레포지토리 푸시 완료 (`3hongwork-hub/gitblog-agent` main 브랜치)
 - [x] `README.md` 자동 업데이트 기능 추가 및 깃허브 푸시 완료
+- [x] GitHub Pages 웹 페이지 호스팅용 `index.md` 및 `_config.yml` 푸시 완료
+- [x] 추천 테마 안내 및 테마 변경 가이드 제공
