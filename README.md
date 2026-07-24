@@ -6,7 +6,7 @@
 
 | 작성일 | 제목 | 링크 |
 | :--- | :--- | :--- |
-| 2026-07-23 | 루프 엔지니어링(Loop Engineering) 완벽 요약: AI 에이전트를 넘어 스스로 일하는 엔진을 만드는 법 | [루프 엔지니어링(Loop Engineering) 완벽 요약](_posts/2026-07-23-loop-engineering-summary.md) |
+| 2026-07-23 | 루프 엔지니어링(Loop Engineering) 완벽 요약: AI 에이전트를 넘어 스스로 일하는 엔진을 만드는 법 | [루프 엔지니어링(Loop Engineering) 완벽 요약: AI 에이전트를 넘어 스스로 일하는 엔진을 만드는 법](_posts/2026-07-23-loop-engineering-summary.md) |
 | 2026-07-23 | 2026년 최신 AI 개발 에이전트 동향과 안티그래비티 활용법 | [2026년 최신 AI 개발 에이전트 동향과 안티그래비티 활용법](_posts/2026-07-23-2026-ai-agent-trends-and-antigravity.md) |
 
 ---
