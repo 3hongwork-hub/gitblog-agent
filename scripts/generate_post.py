@@ -1,4 +1,4 @@
-# Gemini API를 활용해 daily 블로그 포스트 마크다운 파일 생성 및 README.md 목록을 자동 업데이트하는 스크립트
+# Gemini API를 활용해 daily 블로그 포스트 마크다운 파일 생성 및 README.md 목록과 최신 내용 요약을 자동 업데이트하는 스크립트
 import datetime
 import glob
 import json
@@ -6,49 +6,133 @@ import os
 import re
 import urllib.request
 
+def parse_post(filepath):
+    with open(filepath, "r", encoding="utf-8") as f:
+        content = f.read()
+    
+    filename = os.path.basename(filepath)
+    date_match = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
+    date_str = date_match.group(1) if date_match else ""
+    
+    fm_match = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", content, re.DOTALL)
+    title = filename
+    categories = ""
+    tags = ""
+    body = content
+    
+    if fm_match:
+        front_matter = fm_match.group(1)
+        body = fm_match.group(2).strip()
+        
+        t_match = re.search(r'title:\s*["\']?(.*?)["\']?\s*\n', front_matter)
+        if t_match:
+            title = t_match.group(1).strip()
+            
+        c_match = re.search(r'categories:\s*\[?(.*?)\]?\s*\n', front_matter)
+        if c_match:
+            categories = c_match.group(1).strip()
+            
+        tg_match = re.search(r'tags:\s*\[?(.*?)\]?\s*\n', front_matter)
+        if tg_match:
+            tags = tg_match.group(1).strip()
+    
+    # Extract clean excerpt from body
+    lines = body.split("\n")
+    excerpt_lines = []
+    for line in lines:
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if stripped.startswith("#") or stripped.startswith("---") or stripped.startswith("===") or stripped.startswith("```"):
+            continue
+        if stripped.startswith(">"):
+            stripped = stripped.lstrip(">").strip()
+        clean_text = re.sub(r'[*_`]', '', stripped)
+        excerpt_lines.append(clean_text)
+        if len(" ".join(excerpt_lines)) >= 150:
+            break
+            
+    excerpt = " ".join(excerpt_lines)
+    if len(excerpt) > 200:
+        excerpt = excerpt[:197] + "..."
+    if not excerpt:
+        excerpt = title
+
+    rel_link = f"_posts/{filename}"
+    
+    return {
+        "filename": filename,
+        "date": date_str,
+        "title": title,
+        "categories": categories,
+        "tags": tags,
+        "excerpt": excerpt,
+        "body": body,
+        "link": rel_link
+    }
+
 def update_readme():
-    posts = []
     post_files = glob.glob("_posts/*.md")
     post_files.sort(reverse=True)
+    
+    posts = [parse_post(fp) for fp in post_files]
 
-    for filepath in post_files:
-        filename = os.path.basename(filepath)
-        date_match = re.search(r"(\d{4}-\d{2}-\d{2})", filename)
-        date_str = date_match.group(1) if date_match else ""
-        
-        title = filename
-        with open(filepath, "r", encoding="utf-8") as f:
-            content = f.read()
-            title_match = re.search(r'title:\s*["\']?(.*?)["\']?\s*\n', content)
-            if title_match:
-                title = title_match.group(1).strip()
-        
-        rel_link = f"_posts/{filename}"
-        posts.append({"date": date_str, "title": title, "link": rel_link})
+    if not posts:
+        latest_section = "*아직 등록된 포스트가 없습니다.*"
+        table_content = "| - | 포스트가 없습니다. | - |"
+    else:
+        latest = posts[0]
+        latest_body_preview = latest["body"]
+        if len(latest_body_preview) > 2000:
+            latest_body_preview = latest_body_preview[:2000] + f"\n\n*(이하 생략 ... [전체 포스트 읽기]({latest['link']}))*"
+            
+        latest_section = f"""### 📌 [{latest['title']}]({latest['link']})
+- **작성일**: `{latest['date']}`
+- **카테고리**: `{latest['categories'] or '일반'}` | **태그**: `{latest['tags'] or 'AI'}`
 
-    table_rows = []
-    for p in posts:
-        table_rows.append(f"| {p['date']} | {p['title']} | [{p['title']}]({p['link']}) |")
+> **핵심 요약**: {latest['excerpt']}
 
-    table_content = "\n".join(table_rows) if table_rows else "| - | 포스트가 없습니다. | - |"
+<details>
+<summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
+
+{latest_body_preview}
+
+</details>"""
+
+        table_rows = []
+        for p in posts:
+            safe_title = p['title'].replace("|", "ㅣ")
+            safe_excerpt = p['excerpt'].replace("|", "ㅣ").replace("\n", " ")
+            table_rows.append(f"| {p['date']} | [{safe_title}]({p['link']}) | {safe_excerpt} |")
+            
+        table_content = "\n".join(table_rows)
 
     readme_text = f"""# 🤖 GitBlog Agent - 자율 콘텐츠 배포 블로그
 
 안티그래비티(Antigravity) 및 Gemini 모델, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
+매일 새롭게 생성된 블로그 포스트의 최신 내용과 요약 목록이 `README.md`에 자동으로 업데이트됩니다.
 
-## 📝 발행된 포스트 목록 (최신순)
+---
 
-| 작성일 | 제목 | 링크 |
+## 🔥 최신 생성 포스트 (Latest Content)
+
+{latest_section}
+
+---
+
+## 📝 전체 발행 포스트 목록 (Archive)
+
+| 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
 {table_content}
 
 ---
-*이 레포지토리의 블로그 포스트 및 목록은 GitHub Actions에 의해 매일 자동으로 업데이트됩니다.*
+*이 레포지토리의 블로그 포스트 및 README.md는 GitHub Actions에 의해 매일 자동으로 업데이트됩니다.*
 """
 
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_text.strip() + "\n")
-    print("Successfully updated README.md")
+    print("Successfully updated README.md with post contents and summaries.")
 
 def generate_blog_post():
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
