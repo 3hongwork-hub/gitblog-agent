@@ -2,6 +2,7 @@ title: GitBlog Agent
 description: 안티그래비티 및 Gemini 기반 자율 콘텐츠 배포 블로그
 theme: minima
 show_excerpts: true
+future: true
 header_pages:
   - index.md
 plugins:

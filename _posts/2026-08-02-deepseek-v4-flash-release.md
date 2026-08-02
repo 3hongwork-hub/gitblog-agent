@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "DeepSeek-V4-Flash 공개: 벤치마크 82.7점 달성과 AI 개발 에이전트 파이프라인의 혁신"
-date: 2026-08-02 16:00:00 +0900
+date: 2026-08-02 09:00:00 +0900
 categories: [AI, AIAgent]
 tags: [DeepSeek, DeepSeekV4, AIAgent, LLM, Automation, Antigravity]
 ---
