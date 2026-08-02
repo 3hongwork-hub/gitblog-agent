@@ -120,7 +120,7 @@ def update_readme():
 
 ---
 
-## 📝 전체 발행 포스트 목록 (Archive)
+## 📝 전체 발행 포스트 목록 (총 {len(posts)}개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
@@ -132,7 +132,7 @@ def update_readme():
 
     with open("README.md", "w", encoding="utf-8") as f:
         f.write(readme_text.strip() + "\n")
-    print("Successfully updated README.md with post contents and summaries.")
+    print(f"Successfully updated README.md with {len(posts)} post contents and summaries.")
 
 def generate_blog_post():
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -160,40 +160,50 @@ def generate_blog_post():
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={api_key}"
-    payload = {
-        "contents": [{
-            "parts": [{"text": prompt}]
-        }]
-    }
+    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"]
+    generated_text = None
+    last_error = None
 
-    req = urllib.request.Request(
-        url,
-        data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"}
-    )
+    for model in models_to_try:
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+        payload = {
+            "contents": [{
+                "parts": [{"text": prompt}]
+            }]
+        }
 
-    try:
-        with urllib.request.urlopen(req) as response:
-            res_data = json.loads(response.read().decode("utf-8"))
-            generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
-            
-            if generated_text.startswith("```markdown"):
-                generated_text = generated_text[11:]
-            if generated_text.startswith("```"):
-                generated_text = generated_text[3:]
-            if generated_text.endswith("```"):
-                generated_text = generated_text[:-3]
-            generated_text = generated_text.strip()
+        req = urllib.request.Request(
+            url,
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"}
+        )
 
-            os.makedirs("_posts", exist_ok=True)
-            filename = f"_posts/{today_str}-daily-ai-tech-update.md"
-            with open(filename, "w", encoding="utf-8") as f:
-                f.write(generated_text)
-            print(f"Successfully generated post: {filename}")
+        try:
+            with urllib.request.urlopen(req) as response:
+                res_data = json.loads(response.read().decode("utf-8"))
+                generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
+                print(f"Successfully generated content using model: {model}")
+                break
+        except Exception as e:
+            print(f"Model {model} failed: {e}")
+            last_error = e
 
-    except Exception as e:
-        print(f"Failed to generate content: {e}")
+    if generated_text:
+        if generated_text.startswith("```markdown"):
+            generated_text = generated_text[11:]
+        if generated_text.startswith("```"):
+            generated_text = generated_text[3:]
+        if generated_text.endswith("```"):
+            generated_text = generated_text[:-3]
+        generated_text = generated_text.strip()
+
+        os.makedirs("_posts", exist_ok=True)
+        filename = f"_posts/{today_str}-daily-ai-tech-update.md"
+        with open(filename, "w", encoding="utf-8") as f:
+            f.write(generated_text)
+        print(f"Successfully generated post file: {filename}")
+    else:
+        print(f"Failed to generate content with all models. Last error: {last_error}")
 
     update_readme()
 
