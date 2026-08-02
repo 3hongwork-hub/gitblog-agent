@@ -88,7 +88,7 @@ def update_readme():
             
         latest_section = f"""### 📌 [{latest['title']}]({latest['link']})
 - **작성일**: `{latest['date']}`
-- **카테고리**: `{latest['categories'] or '일반'}` | **태그**: `{latest['tags'] or 'AI'}`
+- **카테고리**: `{latest['categories'] or 'AI'}` | **태그**: `{latest['tags'] or 'Antigravity'}`
 
 > **핵심 요약**: {latest['excerpt']}
 
@@ -109,8 +109,10 @@ def update_readme():
 
     readme_text = f"""# 🤖 GitBlog Agent - 자율 콘텐츠 배포 블로그
 
-안티그래비티(Antigravity) 및 Gemini 모델, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
-매일 새롭게 생성된 블로그 포스트의 최신 내용과 요약 목록이 `README.md`에 자동으로 업데이트됩니다.
+> 🌐 **[실시간 웹 블로그 바로가기 (https://3hongwork-hub.github.io/gitblog-agent/)](https://3hongwork-hub.github.io/gitblog-agent/)**
+
+안티그래비티(Antigravity) 및 Gemini AI, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
+매일 새롭게 생성된 AI/개발 트렌드 블로그 포스트의 최신 내용과 요약 목록이 `README.md`와 [실시간 웹 블로그](https://3hongwork-hub.github.io/gitblog-agent/)에 자동으로 업데이트됩니다.
 
 ---
 
@@ -144,19 +146,20 @@ def generate_blog_post():
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     
     prompt = f"""
-오늘 날짜({today_str})를 기준으로 주니어~미드레벨 개발자를 위한 최신 AI 기술 트렌드, 생산성 도구, 또는 에이전틱 워크플로우를 주제로 한 흥미롭고 유익한 블로그 글을 한국어로 작성해줘.
+너는 안티그래비티(Antigravity) AI 에이전트와 Gemini 기반 자율 개발 블로그 'GitBlog Agent'의 수석 에이전트 작가야.
+오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 최신 AI 개발 에이전트 동향, 안티그래비티(Antigravity) 및 Gemini 2.0 활용법, 루프 엔지니어링(Loop Engineering), 에이전틱 워크플로우(Agentic Workflow), 또는 개발 생산성 자동화 팁 중 하나를 주제로 흥미롭고 유익한 블로그 포스트를 한국어로 작성해줘.
 
-다음 조건을 반드시 지켜줘:
-1. 최상단에 Jekyll 프론트 매터(Front Matter)를 포함해줘.
+다음 지침을 반드시 준수해줘:
+1. 최상단에는 아래 형식의 Jekyll 프론트 매터(Front Matter)를 포함해야 해 (제목은 작성 내용에 맞게 매일 다채롭고 매력적으로 지어줘):
    ---
    layout: post
-   title: "오늘의 AI 개발 트렌드 및 생산성 인사이트"
+   title: "주제에 어울리는 매력적인 제목"
    date: {today_str} 09:00:00 +0900
    categories: [AI, Automation]
-   tags: [AI, Gemini, Developer]
+   tags: [Antigravity, Gemini, AIAgent, Automation]
    ---
-2. 제목과 본문에 핵심 키워드가 자연스럽게 들어가도록 해줘.
-3. 코드 예시가 필요하다면 마크다운 코드 블록(```)을 정확히 사용해줘.
+2. 서론-본론(2~3개 세부 항목)-결론 구조로 완성도 높게 작성해줘.
+3. 실전 예시 코드나 지시서 예시가 필요하다면 마크다운 코드 블록(```)을 사용해줘.
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 

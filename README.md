@@ -1,7 +1,9 @@
 # 🤖 GitBlog Agent - 자율 콘텐츠 배포 블로그
 
-안티그래비티(Antigravity) 및 Gemini 모델, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
-매일 새롭게 생성된 블로그 포스트의 최신 내용과 요약 목록이 `README.md`에 자동으로 업데이트됩니다.
+> 🌐 **[실시간 웹 블로그 바로가기 (https://3hongwork-hub.github.io/gitblog-agent/)](https://3hongwork-hub.github.io/gitblog-agent/)**
+
+안티그래비티(Antigravity) 및 Gemini AI, GitHub Actions 연동으로 자율 작성 및 배포되는 정적 블로그 레포지토리입니다.
+매일 새롭게 생성된 AI/개발 트렌드 블로그 포스트의 최신 내용과 요약 목록이 `README.md`와 [실시간 웹 블로그](https://3hongwork-hub.github.io/gitblog-agent/)에 자동으로 업데이트됩니다.
 
 ---
 
@@ -9,7 +11,7 @@
 
 ### 📌 [2026년 최신 AI 개발 에이전트 동향과 Antigravity 2.0 자율 워크플로우](_posts/2026-08-02-daily-ai-tech-update.md)
 - **작성일**: `2026-08-02`
-- **카테고리**: `AI, Automation` | **태그**: `AI`
+- **카테고리**: `AI, Automation` | **태그**: `Antigravity`
 
 > **핵심 요약**: 2026년 8월 현재, 소프트웨어 개발 생태계는 단순히 코드를 추천하거나 완충하는 단계를 넘어섰습니다. 개발자가 상위 수준의 목표를 제시하면, AI 개발 에이전트가 이를 하위 작업(Sub-tasks)으로 분할하고, 스스로 환경을 탐색하며 테스팅 및 배포까지 수행하는 에이전틱 워크플로우(Agentic Workflow)가 완전히 정착되었습니다.
 
