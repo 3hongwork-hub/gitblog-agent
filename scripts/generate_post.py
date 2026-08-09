@@ -176,16 +176,19 @@ def generate_blog_post():
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
-    models_to_try = [
-        "gemini-2.0-flash",
-        "gemini-1.5-flash",
-        "gemini-1.5-pro"
+    endpoints_to_try = [
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent"
     ]
+    
     generated_text = None
     last_error = None
 
-    for model in models_to_try:
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
+    for base_url in endpoints_to_try:
+        url = f"{base_url}?key={api_key}"
         payload = {
             "contents": [{
                 "parts": [{"text": prompt}]
@@ -203,7 +206,7 @@ def generate_blog_post():
                 with urllib.request.urlopen(req) as response:
                     res_data = json.loads(response.read().decode("utf-8"))
                     generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
-                    print(f"Successfully generated content using model: {model}")
+                    print(f"Successfully generated content using endpoint: {base_url}")
                     break
             except urllib.error.HTTPError as e:
                 err_body = ""
@@ -212,20 +215,22 @@ def generate_blog_post():
                 except Exception:
                     pass
 
-                print(f"Model {model} (attempt {attempt+1}) failed with HTTP {e.code}: {err_body or e}")
+                print(f"Endpoint {base_url} (attempt {attempt+1}) failed with HTTP {e.code}: {err_body or e}")
                 last_error = f"HTTP {e.code}: {err_body or e}"
 
                 if e.code == 429:
                     if "limit: 0" in err_body or "limit: 0" in str(e):
-                        print("⚠️ GCP Project Quota Limit is 0. Free tier quota is not enabled for this API Key's Project.")
+                        print(f"⚠️ Endpoint {base_url} returned limit 0. Trying next endpoint...")
                         break
                     if attempt == 0:
-                        print("⚠️ Gemini Free Tier Rate Limit hit (429 Resource Exhausted). Waiting 22 seconds before retrying...")
+                        print("⚠️ Rate Limit hit (429 Resource Exhausted). Waiting 22 seconds before retrying...")
                         time.sleep(22)
                         continue
+                elif e.code == 404:
+                    break
                 break
             except Exception as e:
-                print(f"Model {model} failed: {e}")
+                print(f"Endpoint {base_url} failed: {e}")
                 last_error = e
                 break
 
