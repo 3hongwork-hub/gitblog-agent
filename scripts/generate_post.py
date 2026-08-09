@@ -4,6 +4,7 @@ import glob
 import json
 import os
 import re
+import urllib.error
 import urllib.request
 
 def parse_post(filepath):
@@ -137,10 +138,10 @@ def update_readme():
     print(f"Successfully updated README.md with {len(posts)} post contents and summaries.")
 
 def generate_blog_post():
-    api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    raw_api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
     
-    if not api_key:
+    if not raw_api_key:
         if is_github_actions:
             raise RuntimeError(
                 "❌ GEMINI_API_KEY is missing in GitHub Repository Secrets!\n"
@@ -150,6 +151,9 @@ def generate_blog_post():
             print("Notice: GEMINI_API_KEY missing in local run. Updating README for existing posts.")
             update_readme()
             return
+
+    # Clean whitespace or surrounding quotes from secret value
+    api_key = raw_api_key.strip().strip('"').strip("'")
 
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     
@@ -171,7 +175,7 @@ def generate_blog_post():
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
-    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash", "gemini-2.5-flash"]
+    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash"]
     generated_text = None
     last_error = None
 
@@ -195,6 +199,14 @@ def generate_blog_post():
                 generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
                 print(f"Successfully generated content using model: {model}")
                 break
+        except urllib.error.HTTPError as e:
+            try:
+                err_body = e.read().decode("utf-8")
+                print(f"Model {model} failed with HTTP {e.code}: {err_body}")
+                last_error = f"HTTP {e.code}: {err_body}"
+            except Exception:
+                print(f"Model {model} failed: {e}")
+                last_error = e
         except Exception as e:
             print(f"Model {model} failed: {e}")
             last_error = e
@@ -214,7 +226,7 @@ def generate_blog_post():
             f.write(generated_text)
         print(f"Successfully generated post file: {filename}")
     else:
-        raise RuntimeError(f"❌ Failed to generate content with all Gemini models. Last error: {last_error}")
+        raise RuntimeError(f"❌ Failed to generate content with all Gemini models. Detailed Error:\n{last_error}")
 
     update_readme()
 
