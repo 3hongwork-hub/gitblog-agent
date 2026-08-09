@@ -178,9 +178,8 @@ def generate_blog_post():
 
     models_to_try = [
         "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
-        "gemini-1.5-flash-latest",
-        "gemini-1.5-pro-latest"
+        "gemini-1.5-flash",
+        "gemini-1.5-pro"
     ]
     generated_text = None
     last_error = None
@@ -216,12 +215,15 @@ def generate_blog_post():
                 print(f"Model {model} (attempt {attempt+1}) failed with HTTP {e.code}: {err_body or e}")
                 last_error = f"HTTP {e.code}: {err_body or e}"
 
-                if e.code == 429 and attempt == 0:
-                    print("⚠️ Gemini Free Tier Rate Limit hit (429 Resource Exhausted). Waiting 22 seconds before retrying...")
-                    time.sleep(22)
-                    continue
-                else:
-                    break
+                if e.code == 429:
+                    if "limit: 0" in err_body or "limit: 0" in str(e):
+                        print("⚠️ GCP Project Quota Limit is 0. Free tier quota is not enabled for this API Key's Project.")
+                        break
+                    if attempt == 0:
+                        print("⚠️ Gemini Free Tier Rate Limit hit (429 Resource Exhausted). Waiting 22 seconds before retrying...")
+                        time.sleep(22)
+                        continue
+                break
             except Exception as e:
                 print(f"Model {model} failed: {e}")
                 last_error = e
