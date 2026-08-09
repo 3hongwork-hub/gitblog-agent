@@ -138,10 +138,18 @@ def update_readme():
 
 def generate_blog_post():
     api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
+    is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
+    
     if not api_key:
-        print("Notice: GEMINI_API_KEY missing in local run. Updating README for existing posts.")
-        update_readme()
-        return
+        if is_github_actions:
+            raise RuntimeError(
+                "❌ GEMINI_API_KEY is missing in GitHub Repository Secrets!\n"
+                "Please add GEMINI_API_KEY to Repository Settings -> Secrets and variables -> Actions."
+            )
+        else:
+            print("Notice: GEMINI_API_KEY missing in local run. Updating README for existing posts.")
+            update_readme()
+            return
 
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     
@@ -206,7 +214,7 @@ def generate_blog_post():
             f.write(generated_text)
         print(f"Successfully generated post file: {filename}")
     else:
-        print(f"Failed to generate content with all models. Last error: {last_error}")
+        raise RuntimeError(f"❌ Failed to generate content with all Gemini models. Last error: {last_error}")
 
     update_readme()
 

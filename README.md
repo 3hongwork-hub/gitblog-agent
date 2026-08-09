@@ -9,78 +9,80 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [에이전틱 워크플로우(Agentic Workflow) 핵심 디자인 패턴 4가지와 Antigravity 활용법](_posts/2026-08-06-ai-agentic-workflow-design-patterns.md)
-- **작성일**: `2026-08-06`
+### 📌 [AI 에이전트 하네스(Harness) 최적화와 MCP 2.0 기반 자율 개발 생산성 구축](_posts/2026-08-10-ai-agent-harness-and-mcp-optimization.md)
+- **작성일**: `2026-08-10`
 - **카테고리**: `AI, SoftwareEngineering` | **태그**: `Antigravity`
 
-> **핵심 요약**: 2026년 8월 현재, AI 개발 생태계는 단순히 단일 질문에 답변을 얻는 프롬프트 엔지니어링 시대를 지나, AI가 복잡한 목표를 달성하기 위해 자율적으로 계획을 세우고 도구를 실행하며 결과를 검증하는 에이전틱 워크플로우(Agentic Workflow)의 시대로 완전히 전환되었습니다.
+> **핵심 요약**: 2026년 8월 현재, 소프트웨어 개발 현장에서 AI 에이전트를 도입할 때 가장 핵심적인 화두는 "어떻게 하면 에이전트에게 안전하면서도 강력한 도구 실행 환경(Harness)을 제공할 것인가"입니다. 단순히 LLM에게 코드 생성을 요청하는 수준을 넘어, 에이전트가 데이터베이스 조회, CI/CD 로그 분석, 깃 터미널 커밋, 웹 브라우저 검수까지 자율적...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-2026년 8월 현재, AI 개발 생태계는 단순히 단일 질문에 답변을 얻는 프롬프트 엔지니어링 시대를 지나, AI가 복잡한 목표를 달성하기 위해 자율적으로 계획을 세우고 도구를 실행하며 결과를 검증하는 **에이전틱 워크플로우(Agentic Workflow)**의 시대로 완전히 전환되었습니다.
+2026년 8월 현재, 소프트웨어 개발 현장에서 AI 에이전트를 도입할 때 가장 핵심적인 화두는 **"어떻게 하면 에이전트에게 안전하면서도 강력한 도구 실행 환경(Harness)을 제공할 것인가"**입니다.
 
-Andrew Ng 교수를 비롯한 세계적인 AI 연구진이 강조하듯, 최신 LLM(Large Language Model) 성능을 극대화하는 핵심은 모델 자체의 크기보다 **에이전트가 순환하는 시스템 루프(Loop) 아키텍처**에 있습니다.
+단순히 LLM에게 코드 생성을 요청하는 수준을 넘어, 에이전트가 데이터베이스 조회, CI/CD 로그 분석, 깃 터미널 커밋, 웹 브라우저 검수까지 자율적으로 주도하기 위해서는 고도화된 **하네스 엔지니어링(Harness Engineering)**과 **MCP(Model Context Protocol)** 표준 연동이 필수적입니다.
 
-이번 포스트에서는 현대 소프트웨어 개발에서 가장 주목받는 **에이전틱 워크플로우 4대 핵심 디자인 패턴**과 이를 **Antigravity** 및 **Gemini** 모델에 적용하는 실전 방법을 다룹니다.
-
----
-
-## 1. 에이전틱 워크플로우 4대 핵심 디자인 패턴
-
-### 1) 반추(Reflection) 및 자가 검수 루프
-* **개념**: AI 에이전트가 일차 결과물을 생성한 뒤, 또 다른 검증 프로토콜이나 Checker 에이전트를 통해 결과물의 오류, 스타일, 단위 테스트 통과 여부를 회의 시각으로 평가하고 자가 수정(Self-Correction)하는 패턴입니다.
-* **효과**: 단일 샷(Single-shot) 생성 대비 환각(Hallucination) 및 구문 에러율을 최대 70% 이상 낮출 수 있습니다.
-
-### 2) 도구 사용(Tool Use) & MCP(Model Context Protocol) 연동
-* **개념**: 모델 내부 지식에만 의존하지 않고, 외부 API, 데이터베이스, Git 터미널, 웹 브라우저 등 필요한 도구를 필요 시점에 자율 호출하는 패턴입니다.
-* **효과**: 최신 데이터 반영과 코드 자동 실행, 빌드 검증이 실시간 가능해집니다.
-
-### 3) 계획 수립(Planning) & 하위 작업(Sub-task) 분할
-* **개념**: "정적 블로그 시스템 구축"과 같은 거대한 대 목표가 주어지면, 에이전트가 이를 구현 단위(환경 설정 -> 포스트 작성 -> README 업데이트 -> CI/CD 배포)로 잘게 쪼개어 단계별로 실행하는 패턴입니다.
-* **효과**: 컨텍스트 창의 오염을 막고 복잡한 종속성 작업을 차근차근 완수할 수 있습니다.
-
-### 4) 멀티 에이전트 협업(Multi-Agent Collaboration)
-* **개념**: 전문화된 소형 서브에이전트(`Research`, `Code Writer`, `Security Auditor`)들이 역할을 분담하고, 결과를 메인 오케스트레이터에게 전달하여 병렬 처리하는 구조입니다.
-* **효과**: 서브에이전트 간 역할 격리를 통해 작업 정확성과 효율성을 동시에 달성합니다.
+이번 포스트에서는 에이전트 하네스 구조의 핵심 요소와 MCP 2.0 연동을 통해 자율 개발 생산성을 극대화하는 방법을 정리해 봅니다.
 
 ---
 
-## 2. Antigravity 2.0 기반 실전 워크플로우 예시
+## 1. AI 에이전트 하네스(Harness)의 개념과 역할
 
-구글 딥마인드 에이전트 프레임워크인 **Antigravity**를 활용하면 Maker-Checker 패턴과 멀티 에이전트 루프를 파이썬 코드로 손쉽게 구성할 수 있습니다.
+### 1) 하네스(Harness)란 무엇인가?
+에이전트 하네스는 **"LLM 에이전트가 외부 세계와 상호작용하기 위해 거치는 안전 샌드박스 및 툴 제어 레이어"**입니다.
+* **권한 제어(Permission Control)**: 파일 시스템 쓰기, 외부 네트워크 호출, CLI 명령어 실행에 대한 보안 샌드박스 제공
+* **컨텍스트 격리(Context Isolation)**: Git Worktree를 활용해 에이전트 간 파일 충돌 방지
+* **로그 및 상태 영속성(Persistence)**: 대화창이 꺼져도 디스크(`SKILL.md`나 티켓 시스템)에 상태 기록
+
+---
+
+## 2. MCP(Model Context Protocol) 2.0과의 연동
+
+최신 **MCP 2.0** 표준은 에이전트가 제3자 서비스(Jira, Slack, GitHub, Postgres, Docker)와 표준화된 JSON-RPC 프로토콜로 대화할 수 있도록 지원합니다.
 
 ```python
-# Antigravity 2.0 기반 에이전틱 워크플로우 파이프라인 예시
-import os
-from antigravity.agents import SubAgent, WorkflowLoop
+# MCP 기반 툴 연동 하네스 예시 스크립트
+from antigravity.harness import MCPServerConnector, AgentRunner
 
-# 1. Maker(생성)와 Checker(검증) 서브에이전트 정의
-writer_agent = SubAgent(
-    role="Code Writer",
+# 1. GitHub 및 데이터베이스 MCP 커넥터 연결
+mcp_hub = MCPServerConnector()
+mcp_hub.register("github", url="https://mcp.github.internal/v2")
+mcp_hub.register("db", url="postgres://localhost:5432/analytics")
+
+# 2. 하네스 위에서 Gemini 2.0 에이전트 구동
+runner = AgentRunner(
     model="gemini-2.0-flash",
-    prompt="요구사항에 따른 최고 수준의 Python 코드를 생성하라."
+    harness=mcp_hub,
+    allowed_tools=["github.create_pr", "db.query_readonly"]
 )
 
-reviewer_agent = SubAgent(
-    role="Security & Bug Checker",
-    model="gemini-2.0-flash",
-    prompt="생성된 코드를 엄격히 리뷰하고, 오류가 있다면 개선안을 반환하라."
-)
+# 3. 자율 테스크 수행
+runner.execute("최신 버그 이슈를 확인하고 Fix PR을 생성하라.")
+```
 
-# 2. 자율 순환 루프 실행
-workflow = WorkflowLoop(maker=writer_agent, checker=reviewer
+---
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-06-ai-agentic-workflow-design-patterns.md))*
+## 3. 하네스 최적화를 위한 3대 핵심 지침
+
+1. **최소 권한의 원칙(Principle of Least Privilege)**: 에이전트에게 DB 쓰기나 메인 브랜치 직접 푸시 권한을 주지 말고, Readonly 및 Branch PR 전용 권한만 할당하세요.
+2. **독립 검증 게이트(Verification Gate)**: 코드를 생성하는 에이전트와 단위 테스트/보안 검수를 수행하는 에이전트를 철저히 분리하세요.
+3. **토큰 및 시도 횟수 제한(Rate Limit & Token Caching)**: 무한 루프 방지를 위해 최대 시도 횟수(Max Effort)와 컨텍스트 캐싱을 활성화하세요.
+
+---
+
+## 4. 결론
+
+에이전트의 성능은 모델 성능(Intelligence)만으로 결정되지 않습니다. 에이전트가 신뢰할 수 있는 울타리 안에서 도구를 자유롭게 휘두를 수 있는 **하네스(Harness) 아키텍처**를 제대로 구축할 때 비로소 진정한 자율 개발 자동화가 완성됩니다.
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 5개)
+## 📝 전체 발행 포스트 목록 (총 6개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-08-10 | [AI 에이전트 하네스(Harness) 최적화와 MCP 2.0 기반 자율 개발 생산성 구축](_posts/2026-08-10-ai-agent-harness-and-mcp-optimization.md) | 2026년 8월 현재, 소프트웨어 개발 현장에서 AI 에이전트를 도입할 때 가장 핵심적인 화두는 "어떻게 하면 에이전트에게 안전하면서도 강력한 도구 실행 환경(Harness)을 제공할 것인가"입니다. 단순히 LLM에게 코드 생성을 요청하는 수준을 넘어, 에이전트가 데이터베이스 조회, CI/CD 로그 분석, 깃 터미널 커밋, 웹 브라우저 검수까지 자율적... |
 | 2026-08-06 | [에이전틱 워크플로우(Agentic Workflow) 핵심 디자인 패턴 4가지와 Antigravity 활용법](_posts/2026-08-06-ai-agentic-workflow-design-patterns.md) | 2026년 8월 현재, AI 개발 생태계는 단순히 단일 질문에 답변을 얻는 프롬프트 엔지니어링 시대를 지나, AI가 복잡한 목표를 달성하기 위해 자율적으로 계획을 세우고 도구를 실행하며 결과를 검증하는 에이전틱 워크플로우(Agentic Workflow)의 시대로 완전히 전환되었습니다. |
 | 2026-08-02 | [DeepSeek-V4-Flash 공개: 벤치마크 82.7점 달성과 AI 개발 에이전트 파이프라인의 혁신](_posts/2026-08-02-deepseek-v4-flash-release.md) | 2026년 7월 31일, DeepSeek에서 차세대 소형·고성능 에이전트 모델인 DeepSeek-V4-Flash API 정식 버전을 공개 베타로 출시했습니다. 이번 V4-Flash 업데이트는 단순한 속도 향상을 넘어, 에이전틱 벤치마크에서 기존 상위 모델(V4-Pro-Preview)을 크게 뛰어넘는 성과를 기록하며 AI 개발 에이전트 생태계에 큰 파장... |
 | 2026-08-02 | [2026년 최신 AI 개발 에이전트 동향과 Antigravity 2.0 자율 워크플로우](_posts/2026-08-02-daily-ai-tech-update.md) | 2026년 8월 현재, 소프트웨어 개발 생태계는 단순히 코드를 추천하거나 완충하는 단계를 넘어섰습니다. 개발자가 상위 수준의 목표를 제시하면, AI 개발 에이전트가 이를 하위 작업(Sub-tasks)으로 분할하고, 스스로 환경을 탐색하며 테스팅 및 배포까지 수행하는 에이전틱 워크플로우(Agentic Workflow)가 완전히 정착되었습니다. |
