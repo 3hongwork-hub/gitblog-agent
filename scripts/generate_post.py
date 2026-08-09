@@ -4,6 +4,7 @@ import glob
 import json
 import os
 import re
+import time
 import urllib.error
 import urllib.request
 
@@ -175,7 +176,12 @@ def generate_blog_post():
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
-    models_to_try = ["gemini-2.0-flash", "gemini-1.5-flash"]
+    models_to_try = [
+        "gemini-2.0-flash",
+        "gemini-2.0-flash-lite",
+        "gemini-1.5-flash-latest",
+        "gemini-1.5-pro-latest"
+    ]
     generated_text = None
     last_error = None
 
@@ -193,23 +199,36 @@ def generate_blog_post():
             headers={"Content-Type": "application/json"}
         )
 
-        try:
-            with urllib.request.urlopen(req) as response:
-                res_data = json.loads(response.read().decode("utf-8"))
-                generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
-                print(f"Successfully generated content using model: {model}")
-                break
-        except urllib.error.HTTPError as e:
+        for attempt in range(2):
             try:
-                err_body = e.read().decode("utf-8")
-                print(f"Model {model} failed with HTTP {e.code}: {err_body}")
-                last_error = f"HTTP {e.code}: {err_body}"
-            except Exception:
+                with urllib.request.urlopen(req) as response:
+                    res_data = json.loads(response.read().decode("utf-8"))
+                    generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
+                    print(f"Successfully generated content using model: {model}")
+                    break
+            except urllib.error.HTTPError as e:
+                err_body = ""
+                try:
+                    err_body = e.read().decode("utf-8")
+                except Exception:
+                    pass
+
+                print(f"Model {model} (attempt {attempt+1}) failed with HTTP {e.code}: {err_body or e}")
+                last_error = f"HTTP {e.code}: {err_body or e}"
+
+                if e.code == 429 and attempt == 0:
+                    print("⚠️ Gemini Free Tier Rate Limit hit (429 Resource Exhausted). Waiting 22 seconds before retrying...")
+                    time.sleep(22)
+                    continue
+                else:
+                    break
+            except Exception as e:
                 print(f"Model {model} failed: {e}")
                 last_error = e
-        except Exception as e:
-            print(f"Model {model} failed: {e}")
-            last_error = e
+                break
+
+        if generated_text:
+            break
 
     if generated_text:
         if generated_text.startswith("```markdown"):
