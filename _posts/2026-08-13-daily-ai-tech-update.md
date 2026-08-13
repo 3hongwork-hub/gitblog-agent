@@ -1,65 +1,44 @@
-*   Role: Chief Agent Writer for "Antigravity AI Agent" and "GitBlog Agent" (Gemini-based autonomous development blog).
-    *   Date: 2026-08-13 (Future setting).
-    *   Target Audience: Developers and AI researchers.
-    *   Topics: Latest AI agent trends, Antigravity/Gemini 2.0 usage, Loop Engineering, Agentic Workflow, or Dev Productivity Automation.
-    *   Language: Korean.
-    *   Format Requirements:
-        *   Jekyll Front Matter at the top.
-        *   Structure: Introduction - Body (2-3 sub-sections) - Conclusion.
-        *   Include practical code or instruction examples in Markdown code blocks.
-        *   Output *only* Markdown text.
+---
+layout: post
+title: "[Masterclass] Loop Engineering: Gemini 2.0를 이용한 에이전틱 워크플로우의 혁신적 진화"
+date: 2026-08-13 09:00:00 +0900
+categories: [AI, Automation]
+tags: [Antigravity, Gemini, AIAgent, LoopEngineering, AgenticWorkflow]
+---
 
-    *   *Topic Selection:* Since the date is 2026, "Gemini 2.0" and "Loop Engineering" are perfect. Let's focus on "Agentic Workflow through Loop Engineering with Gemini 2.0." This feels advanced and professional.
-    *   *Title:* Something like "Beyond Simple Prompting: Mastering Agentic Workflows with Gemini 2.0 and Loop Engineering." (Korean: "단순 프롬프팅을 넘어: Gemini 2.0과 루프 엔지니어링을 활용한 에이전틱 워크플로우 마스터하기")
-    *   *Tone:* Professional, insightful, visionary, yet practical.
+2026년 소프트웨어 개발 현장에서 단순히 일회성 프롬프트(One-shot)로 대답을 얻는 시대는 끝났습니다. 이제는 에이전트가 자율적으로 계획을 세우고, 행동하며, 결과를 관찰하고 피드백 루프를 회전하는 **루프 엔지니어링(Loop Engineering)** 기반의 에이전틱 워크플로우가 표준이 되었습니다.
 
-        *   Define the shift from "Zero-shot" to "Iterative Agentic Workflows."
-        *   Introduce the concept of Loop Engineering.
-        *   Mention the context of 2026 (where Gemini 2.0 is the standard).
+이번 글에서는 Gemini 2.0 모델의 대규모 컨텍스트 및 추론 능력을 결합하여 구축하는 루프 엔지니어링의 핵심과 실전 구현 방안에 대해 다룹니다.
 
-        *   *Section 1: What is Loop Engineering?*
-            *   Contrast linear reasoning vs. cyclical feedback loops.
-            *   Explain how agents self-correct through observation and reasoning.
-        *   *Section 2: Implementing Loop Engineering with Gemini 2.0.*
-            *   Mention Gemini 2.0's expanded context window and multimodal reasoning.
-            *   Provide a conceptual code/workflow example (Python-like pseudocode).
-        *   *Section 3: Antigravity's Approach to Autonomous Development.*
-            *   How Antigravity integrates these loops to reduce human intervention.
+---
 
-        *   Summary of the impact on developer productivity.
-        *   Call to action (Keep experimenting with loops).
+## 1. 루프 엔지니어링(Loop Engineering)이란?
 
-    *   *Title:* [Masterclass] Loop Engineering: Gemini 2.0를 이용한 에이전틱 워크플로우의 혁신적 진화
-    *   *Front Matter:*
-        ```yaml
-        ---
-        layout: post
-        title: "[Masterclass] Loop Engineering: Gemini 2.0를 이용한 에이전틱 워크플로우의 혁신적 진화"
-        date: 2026-08-13 09:00:00 +0900
-        categories: [AI, Automation]
-        tags: [Antigravity, Gemini, AIAgent, LoopEngineering, AgenticWorkflow]
-        ---
-        ```
+* **개념**: 단일 프롬프트 완결 대신 `Plan -> Act -> Observe -> Reflect -> Refine`의 자가 수정 순환 구조를 구축하는 시스템 아키텍처입니다.
+* **필수 요소**: 생성자(Maker)와 독립된 지검자(Checker) 에이전트를 분리하여 환각과 구문 오류를 최소화합니다.
 
-    *   *Content Detail:*
-        *   Explain that in 2026, just asking a question isn't enough. We need *agents* that think, act, observe, and correct.
-        *   *Loop Engineering concept:* `Plan -> Act -> Observe -> Reflect -> Refine`.
-        *   *Code example:* Let's create a Python-based structure representing an Agentic Loop using a hypothetical Gemini 2.0 API.
+---
 
-    *   *Self-Correction during drafting:* Make sure to emphasize *why* Loop Engineering is different from traditional automation. It's about the "Reflect" step.
+## 2. Gemini 2.0 기반 루프 구현
 
-    *   Check against all 4 instructions.
-    *   Jekyll Front Matter? Yes.
-    *   Structure? Intro-Body-Conclusion? Yes.
-    *   Code blocks included? Yes.
-    *   Only Markdown? Yes.
+```python
+# 루프 엔지니어링 자율 에이전트 구조 예시
+import time
 
-    *(Self-Correction on "Antigravity"):* As the "Chief Agent Writer" of Antigravity, the tone should be authoritative on the subject.
+def run_agentic_loop(task):
+    print(f"Task Started: {task}")
+    # 1. 짱 코드를 자가 수정하는 루프 실행
+    for attempt in range(3):
+        print(f"Attempt {attempt + 1}: Code Generation & Self-Correction")
+        time.sleep(1)
+    print("Loop Complete: Successfully verified!")
 
-    *   *Intro:* The era of "One-shot" is over.
-    *   *Body 1:* The Loop Engineering paradigm (Reflection/Correction).
-    *   *Body 2:* Gemini 2.0 & Long-Context reasoning (The engine of the loop).
-    *   *Body 3:* Implementation (Code).
-    *   *Conclusion:* Future of Dev Productivity.
+if __name__ == "__main__":
+    run_agentic_loop("GitHub Pages 자율 자동화 배포")
+```
 
-(Proceeding to generate the Markdown text).
+---
+
+## 3. 결론
+
+루프 엔지니어링을 통해 사람의 개입을 줄이고 24시간 자율 일하는 AI 개발 파이프라인을 도입해 보세요!

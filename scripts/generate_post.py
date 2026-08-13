@@ -187,14 +187,14 @@ def generate_blog_post():
 오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 최신 AI 개발 에이전트 동향, 안티그래비티(Antigravity) 및 Gemini 2.0 활용법, 루프 엔지니어링(Loop Engineering), 에이전틱 워크플로우(Agentic Workflow), 또는 개발 생산성 자동화 팁 중 하나를 주제로 흥미롭고 유익한 블로그 포스트를 한국어로 작성해줘.
 
 다음 지침을 반드시 준수해줘:
-1. 최상단에는 아래 형식의 Jekyll 프론트 매터(Front Matter)를 포함해야 해 (제목은 작성 내용에 맞게 매일 다채롭고 매력적으로 지어줘):
-   ---
-   layout: post
-   title: "주제에 어울리는 매력적인 제목"
-   date: {today_str} 09:00:00 +0900
-   categories: [AI, Automation]
-   tags: [Antigravity, Gemini, AIAgent, Automation]
-   ---
+1. 최상단에는 반드시 아래 형식의 Jekyll 프론트 매터(Front Matter)로 시작해야 하며, 서론에 다른 잡담이나 설명 텍스트를 절대 추가하지 마:
+---
+layout: post
+title: "주제에 어울리는 매력적인 제목"
+date: {today_str} 09:00:00 +0900
+categories: [AI, Automation]
+tags: [Antigravity, Gemini, AIAgent, Automation]
+---
 2. 서론-본론(2~3개 세부 항목)-결론 구조로 완성도 높게 작성해줘.
 3. 실전 예시 코드나 지시서 예시가 필요하다면 마크다운 코드 블록(```)을 사용해줘.
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
@@ -269,6 +269,7 @@ def generate_blog_post():
             break
 
     if generated_text:
+        # Strip any code block backticks if wrapped
         if generated_text.startswith("```markdown"):
             generated_text = generated_text[11:]
         if generated_text.startswith("```"):
@@ -276,6 +277,11 @@ def generate_blog_post():
         if generated_text.endswith("```"):
             generated_text = generated_text[:-3]
         generated_text = generated_text.strip()
+
+        # Ensure text starts at first Jekyll front matter '---'
+        fm_pos = generated_text.find("---")
+        if fm_pos != -1:
+            generated_text = generated_text[fm_pos:]
 
         os.makedirs("_posts", exist_ok=True)
         filename = f"_posts/{today_str}-daily-ai-tech-update.md"
