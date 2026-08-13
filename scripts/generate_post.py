@@ -138,6 +138,30 @@ def update_readme():
         f.write(readme_text.strip() + "\n")
     print(f"Successfully updated README.md with {len(posts)} post contents and summaries.")
 
+def discover_active_endpoints(api_key):
+    """Dynamically query Google API v1beta and v1 to list active model generateContent endpoints."""
+    discovered = []
+    for api_ver in ["v1beta", "v1"]:
+        url = f"https://generativelanguage.googleapis.com/{api_ver}/models?key={api_key}"
+        req = urllib.request.Request(url)
+        try:
+            with urllib.request.urlopen(req) as response:
+                res_data = json.loads(response.read().decode("utf-8"))
+                for m in res_data.get("models", []):
+                    methods = m.get("supportedGenerationMethods", [])
+                    if "generateContent" in methods:
+                        full_name = m.get("name", "")
+                        if full_name:
+                            ep = f"https://generativelanguage.googleapis.com/{api_ver}/{full_name}:generateContent"
+                            if ep not in discovered:
+                                discovered.append(ep)
+        except Exception as e:
+            print(f"Notice: Failed to query {api_ver} models list: {e}")
+
+    if discovered:
+        print(f"Discovered {len(discovered)} active generateContent endpoints from Google API.")
+    return discovered
+
 def generate_blog_post():
     raw_api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
@@ -176,14 +200,21 @@ def generate_blog_post():
 4. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
-    endpoints_to_try = [
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent",
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent",
-        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent",
-        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent",
-        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro:generateContent"
+    discovered_endpoints = discover_active_endpoints(api_key)
+    
+    fallback_endpoints = [
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-001:generateContent",
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent",
+        "https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-002:generateContent"
     ]
     
+    endpoints_to_try = []
+    for ep in discovered_endpoints + fallback_endpoints:
+        if ep not in endpoints_to_try:
+            endpoints_to_try.append(ep)
+
     generated_text = None
     last_error = None
 
