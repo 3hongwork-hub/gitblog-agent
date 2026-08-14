@@ -78,11 +78,12 @@ if __name__ == "__main__":
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 8개)
+## 📝 전체 발행 포스트 목록 (총 9개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
 | 2026-08-14 | [Gemini 2.5와 Antigravity 동적 서브에이전트 기반 자율 개발 오케스트레이션](_posts/2026-08-14-gemini-2-5-and-antigravity-subagent-automation.md) | 2026년 8월 14일 현재, 소프트웨어 개발 환경은 단일 AI 에이전트의 한계를 넘어, 여러 개의 서브에이전트(Sub-agent)를 동적으로 생성하고 오케스트레이션하는 자율 멀티에이전트 개발 루프가 완전한 표준으로 자리잡았습니다. 구글 딥마인드의 최신 Gemini 2.5 모델과 Antigravity 프레임워크를 결합하면, 개발자의 개입 없이 요구사항... |
+| 2026-08-14 | [2026-08-14-daily-ai-tech-update.md](_posts/2026-08-14-daily-ai-tech-update.md) | layout: post title: "선형적 명령을 넘어 순환적 사고로: 루프 엔지니어링(Loop Engineering)과 Gemini 2.0의 결합" date: 2026-08-14 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineerin... |
 | 2026-08-13 | [[Masterclass] Loop Engineering: Gemini 2.0를 이용한 에이전틱 워크플로우의 혁신적 진화](_posts/2026-08-13-daily-ai-tech-update.md) | 2026년 소프트웨어 개발 현장에서 단순히 일회성 프롬프트(One-shot)로 대답을 얻는 시대는 끝났습니다. 이제는 에이전트가 자율적으로 계획을 세우고, 행동하며, 결과를 관찰하고 피드백 루프를 회전하는 루프 엔지니어링(Loop Engineering) 기반의 에이전틱 워크플로우가 표준이 되었습니다. |
 | 2026-08-10 | [AI 에이전트 하네스(Harness) 최적화와 MCP 2.0 기반 자율 개발 생산성 구축](_posts/2026-08-10-ai-agent-harness-and-mcp-optimization.md) | 2026년 8월 현재, 소프트웨어 개발 현장에서 AI 에이전트를 도입할 때 가장 핵심적인 화두는 "어떻게 하면 에이전트에게 안전하면서도 강력한 도구 실행 환경(Harness)을 제공할 것인가"입니다. 단순히 LLM에게 코드 생성을 요청하는 수준을 넘어, 에이전트가 데이터베이스 조회, CI/CD 로그 분석, 깃 터미널 커밋, 웹 브라우저 검수까지 자율적... |
 | 2026-08-06 | [에이전틱 워크플로우(Agentic Workflow) 핵심 디자인 패턴 4가지와 Antigravity 활용법](_posts/2026-08-06-ai-agentic-workflow-design-patterns.md) | 2026년 8월 현재, AI 개발 생태계는 단순히 단일 질문에 답변을 얻는 프롬프트 엔지니어링 시대를 지나, AI가 복잡한 목표를 달성하기 위해 자율적으로 계획을 세우고 도구를 실행하며 결과를 검증하는 에이전틱 워크플로우(Agentic Workflow)의 시대로 완전히 전환되었습니다. |
