@@ -9,79 +9,73 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [Gemini 2.5와 Antigravity 동적 서브에이전트 기반 자율 개발 오케스트레이션](_posts/2026-08-14-gemini-2-5-and-antigravity-subagent-automation.md)
-- **작성일**: `2026-08-14`
+### 📌 [루프 엔지니어링(Loop Engineering): Antigravity와 Gemini를 활용한 자율 자가 치유(Self-Healing) 개발 파이프라인 구축](_posts/2026-08-15-daily-ai-tech-update.md)
+- **작성일**: `2026-08-15`
 - **카테고리**: `AI, Automation` | **태그**: `Antigravity`
 
-> **핵심 요약**: 2026년 8월 14일 현재, 소프트웨어 개발 환경은 단일 AI 에이전트의 한계를 넘어, 여러 개의 서브에이전트(Sub-agent)를 동적으로 생성하고 오케스트레이션하는 자율 멀티에이전트 개발 루프가 완전한 표준으로 자리잡았습니다. 구글 딥마인드의 최신 Gemini 2.5 모델과 Antigravity 프레임워크를 결합하면, 개발자의 개입 없이 요구사항...
+> **핵심 요약**: 2026년 현재, 소프트웨어 개발 패러다임은 단순히 코드를 생성하는 LLM(Large Language Model) 보조 도구를 넘어, 환경을 인지하고 지속적으로 태스크를 수행하는 완전 자율 에이전틱 워크플로우(Agentic Workflow)로 완전히 전환되었습니다. 그 중심에는 루프 엔지니어링(Loop Engineering)이 있습니다. 단발성 프롬프...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-2026년 8월 14일 현재, 소프트웨어 개발 환경은 단일 AI 에이전트의 한계를 넘어, 여러 개의 서브에이전트(Sub-agent)를 동적으로 생성하고 오케스트레이션하는 **자율 멀티에이전트 개발 루프**가 완전한 표준으로 자리잡았습니다.
+2026년 현재, 소프트웨어 개발 패러다임은 단순히 코드를 생성하는 LLM(Large Language Model) 보조 도구를 넘어, 환경을 인지하고 지속적으로 태스크를 수행하는 **완전 자율 에이전틱 워크플로우(Agentic Workflow)**로 완전히 전환되었습니다.
 
-구글 딥마인드의 최신 **Gemini 2.5** 모델과 **Antigravity** 프레임워크를 결합하면, 개발자의 개입 없이 요구사항 분석부터 멀티 파일 코드 생성, 단위 테스트, PR 자동 생성까지 이어지는 엔드투엔드 자율 파이프라인을 구축할 수 있습니다.
+그 중심에는 **루프 엔지니어링(Loop Engineering)**이 있습니다. 단발성 프롬프트-응답 구조에서 벗어나, 에이전트가 코드를 작성하고(Act), 테스트를 실행하며(Observe), 실패 원인을 분석하여(Reflect), 다시 수정하는(Heal) 일련의 순환 주기를 정밀하게 통제하는 기법입니다.
 
-이번 포스트에서는 동적 서브에이전트 오케스트레이션의 핵심 구조와 실전 적용 방안을 다룹니다.
-
----
-
-## 1. 동적 서브에이전트 오케스트레이션 3대 핵심 구조
-
-### 1) 역할 격리(Role Isolation)와 Git Worktree 독립 공간
-메인 에이전트가 단독으로 모든 코드를 짤 때 발생하는 컨텍스트 오염을 막기 위해, 다음과 같이 특화된 서브에이전트에게 일을 떼어줍니다:
-- **Research Agent**: 코드베이스 전체의 종속성을 파악하고 문제 해결 전략 수립
-- **Coder Agent**: 독립된 Git Worktree 샌드박스에서 신규 코드 작성
-- **Checker Agent**: 짠 코드를 독립된 시각으로 검수하고 오답 시 개선 요청
-
-### 2) 대규모 컨텍스트 및 실시간 구조화
-**Gemini 2.5**의 수백만 토큰 컨텍스트 창과 캐싱 메커니즘을 활용하여 프로젝트 전체 코드와 빌드 로그, 종속성 트리를 한 번에 파싱하고 지연 없는 피드백 루프를 회전시킵니다.
-
-### 3) 상태 영속성(Persistence)과 디스크 메모리
-컨텍스트 세션이 초기화되어도 서브에이전트들이 도출한 분석 결과와 작업 상태를 마크다운 형태의 디스크 파일(`SKILL.md`, `transcript.json`)에 기록하여 기억을 유지합니다.
+이번 포스트에서는 최신 **안티그래비티(Antigravity) 프레임워크**와 **Gemini 기반의 초고속 추론 엔진**을 결합하여, 버그 발생 시 스스로 브랜치를 생성하고 테스트 통과까지 자율 디버깅을 수행하는 **자가 치유(Self-Healing) CI/CD 에이전트** 구축법을 다룹니다.
 
 ---
 
-## 2. Antigravity 파이프라인 구현 예시
+## 1. 루프 엔지니어링(Loop Engineering)의 핵심 구조
 
-```python
-# 2026-08-14 자율 멀티 서브에이전트 파이프라인 예시
-import os
-from antigravity.orchestrator import AgentOrchestrator
+자율 개발 에이전트가 환각(Hallucination)에 빠지거나 무한 루프에 갇히지 않고 목표를 완수하도록 하려면 체계적인 피드백 루프 설계가 필수적입니다.
 
-# 1. Gemini 2.5 기반 오케스트레이터 정의
-orchestrator = AgentOrchestrator(
-    researcher_model="gemini-2.5-flash",
-    coder_model="gemini-2.5-pro",
-    checker_model="gemini-2.5-flash"
-)
-
-# 2. Daily 자율 개발 & 포스팅 루프 구동
-if __name__ == "__main__":
-    task_status = orchestrator.run_daily_loop(
-        target_repo="3hongwork-hub/gitblog-agent",
-        topic="2026년 최신 AI 개발 에이전트 동향 및 자율 배포"
-    )
-    print(f"Loop Complete: {task_status}")
+```
++--------------------------------------------------------+
+|                   Agent Control Loop                   |
+|                                                        |
+|   [1. Goal Intake] ──> [2. Plan & Tool Execution]     |
+|            ^                         │                 |
+|            │                         ▼                 |
+|   [5. State Update] <── [4. Reflect] <── [3. Verify]   |
++--------------------------------------------------------+
 ```
 
+1. **Intake & Context Caching**: 이슈 티켓 또는 실패한 CI 로그를 수집하고 저장소의 컨텍스트를 구조화합니다.
+2. **Execution (Plan & Act)**: Gemini의 고속 함수 호출(Function Calling)을 통해 코드 편집, 터미널 명령 실행 등을 수행합니다.
+3. **Verification**: 격리된 샌드박스 환경(Docker/MicroVM)에서 테스트 슈트(Jest, PyTest 등)를 구동합니다.
+4. **Reflection (자가 반추)**: 에러 스택 트레이스와 린트 결과를 파싱하여 실패 원인을 구조화된 메타데이터로 변환합니다.
+5. **State Update**: 수정 이력을 보존하며 최대 허용 턴(Max Turns) 내에서 다음 루프를 전개합니다.
+
 ---
 
-## 3. 결론
+## 2. Antigravity + Gemini 기반 자율 에이전트 구현
 
-단순히 AI 모델에게 프롬프트를 치는 개발자에서 벗어나, 에이전트들이 스스로 회전하며 결과를 검증하는 **루프(Loop) 엔진을 설계하는 루프 엔지니어(Loop Engineer)**로 진화해 보세요!
+안티그래비티(Antigravity)는 에이전트의 샌드박스 제어, 메모리 컨텍스트 관리, 롤백 메커니즘을 네이티브로 지원합니다. 아래는 Gemini API와 결합하여 자가 치유 루프를 실행하는 핵심 파이선 코드 예시입니다.
 
----
-*참고 링크: [GitBlog Agent 실시간 웹사이트](https://3hongwork-hub.github.io/gitblog-agent/)*
+```python
+import os
+from antigravity.agent import AgentRuntime, SandboxedWorkspace
+from antigravity.tools import ShellTool, FileEditTool
+from google import genai
+from google.genai import types
+
+# 1. 샌드박스 워크스페이스 및 도구 초기화
+workspace = SandboxedWorkspace(repo_path="./my-target-project")
+tools = [
+    ShellTool(workspa
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-15-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 9개)
+## 📝 전체 발행 포스트 목록 (총 10개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-08-15 | [루프 엔지니어링(Loop Engineering): Antigravity와 Gemini를 활용한 자율 자가 치유(Self-Healing) 개발 파이프라인 구축](_posts/2026-08-15-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 개발 패러다임은 단순히 코드를 생성하는 LLM(Large Language Model) 보조 도구를 넘어, 환경을 인지하고 지속적으로 태스크를 수행하는 완전 자율 에이전틱 워크플로우(Agentic Workflow)로 완전히 전환되었습니다. 그 중심에는 루프 엔지니어링(Loop Engineering)이 있습니다. 단발성 프롬프... |
 | 2026-08-14 | [Gemini 2.5와 Antigravity 동적 서브에이전트 기반 자율 개발 오케스트레이션](_posts/2026-08-14-gemini-2-5-and-antigravity-subagent-automation.md) | 2026년 8월 14일 현재, 소프트웨어 개발 환경은 단일 AI 에이전트의 한계를 넘어, 여러 개의 서브에이전트(Sub-agent)를 동적으로 생성하고 오케스트레이션하는 자율 멀티에이전트 개발 루프가 완전한 표준으로 자리잡았습니다. 구글 딥마인드의 최신 Gemini 2.5 모델과 Antigravity 프레임워크를 결합하면, 개발자의 개입 없이 요구사항... |
 | 2026-08-14 | [2026-08-14-daily-ai-tech-update.md](_posts/2026-08-14-daily-ai-tech-update.md) | layout: post title: "선형적 명령을 넘어 순환적 사고로: 루프 엔지니어링(Loop Engineering)과 Gemini 2.0의 결합" date: 2026-08-14 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineerin... |
 | 2026-08-13 | [[Masterclass] Loop Engineering: Gemini 2.0를 이용한 에이전틱 워크플로우의 혁신적 진화](_posts/2026-08-13-daily-ai-tech-update.md) | 2026년 소프트웨어 개발 현장에서 단순히 일회성 프롬프트(One-shot)로 대답을 얻는 시대는 끝났습니다. 이제는 에이전트가 자율적으로 계획을 세우고, 행동하며, 결과를 관찰하고 피드백 루프를 회전하는 루프 엔지니어링(Loop Engineering) 기반의 에이전틱 워크플로우가 표준이 되었습니다. |
