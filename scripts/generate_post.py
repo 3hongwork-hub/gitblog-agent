@@ -183,21 +183,22 @@ def generate_blog_post():
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     
     prompt = f"""
-너는 안티그래비티(Antigravity) AI 에이전트와 Gemini 기반 자율 개발 블로그 'GitBlog Agent'의 수석 에이전트 작가야.
-오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 최신 AI 개발 에이전트 동향, 안티그래비티(Antigravity) 및 Gemini 2.0 활용법, 루프 엔지니어링(Loop Engineering), 에이전틱 워크플로우(Agentic Workflow), 또는 개발 생산성 자동화 팁 중 하나를 주제로 흥미롭고 유익한 블로그 포스트를 한국어로 작성해줘.
+너는 안티그래비티(Antigravity) AI 에이전트와 Gemini 기반 자율 개발 블로그 'GitBlog Agent'의 수석 한국어 전문 에이전트 작가야.
+오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 최신 AI 개발 에이전트 동향, 안티그래비티(Antigravity) 및 Gemini 활용법, 루프 엔지니어링(Loop Engineering), 에이전틱 워크플로우(Agentic Workflow), 또는 개발 생산성 자동화 팁 중 하나를 주제로 흥미롭고 유익한 블로그 포스트를 100% 자연스럽고 완벽한 한국어로 작성해줘.
 
 다음 지침을 반드시 준수해줘:
-1. 최상단에는 반드시 아래 형식의 Jekyll 프론트 매터(Front Matter)로 시작해야 하며, 서론에 다른 잡담이나 설명 텍스트를 절대 추가하지 마:
+1. **모든 본문, 소제목, 설명, 요약은 100% 한국어로 작성해야 해.** (기술 전문 용어, 코드 키워드, 제품명만 영문 병행 허용)
+2. 최상단에는 반드시 아래 형식의 Jekyll 프론트 매터(Front Matter)로 시작해야 하며, 서론 앞에 어떤 생각 과정(Thinking)이나 영문 서술 텍스트도 절대 포함하지 마:
 ---
 layout: post
-title: "주제에 어울리는 매력적인 제목"
+title: "주제에 어울리는 매력적인 한국어 제목"
 date: {today_str} 09:00:00 +0900
 categories: [AI, Automation]
 tags: [Antigravity, Gemini, AIAgent, Automation]
 ---
-2. 서론-본론(2~3개 세부 항목)-결론 구조로 완성도 높게 작성해줘.
-3. 실전 예시 코드나 지시서 예시가 필요하다면 마크다운 코드 블록(```)을 사용해줘.
-4. 오직 마크다운 포맷 텍스트만 출력해줘.
+3. 서론 - 본론(2~3개 세부 한국어 소제목) - 결론 구조로 완성도 높게 작성해줘.
+4. 실전 예시 코드나 지시서 예시가 필요하다면 마크다운 코드 블록(```)을 사용하고, 코드 주석 및 설명도 한국어로 작성해줘.
+5. 오직 마크다운 포맷 텍스트만 출력해줘.
 """
 
     discovered_endpoints = discover_active_endpoints(api_key)
