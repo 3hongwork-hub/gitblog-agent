@@ -9,65 +9,56 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [2026-08-17-daily-ai-tech-update.md](_posts/2026-08-17-daily-ai-tech-update.md)
-- **작성일**: `2026-08-17`
+### 📌 [2026-08-18-daily-ai-tech-update.md](_posts/2026-08-18-daily-ai-tech-update.md)
+- **작성일**: `2026-08-18`
 - **카테고리**: `AI` | **태그**: `Antigravity`
 
-> **핵심 요약**: layout: post title: "프롬프트를 넘어 루프 엔지니어링으로: Gemini 2.0과 에이전틱 워크플로우의 시대" date: 2026-08-17 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow, LoopEngineer...
+> **핵심 요약**:    Role: Chief Agent Writer for Antigravity AI Agent & Gemini-based Autonomous Development Blog 'GitBlog Agent'.    Current Date: 2026-08-18.    Target Audience: Developers and AI Researchers.
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
----
-        layout: post
-        title: "프롬프트를 넘어 루프 엔지니어링으로: Gemini 2.0과 에이전틱 워크플로우의 시대"
-        date: 2026-08-17 09:00:00 +0900
-        categories: [AI, Automation]
-        tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow, LoopEngineering]
-        ---
-        ```
+*   Role: Chief Agent Writer for Antigravity AI Agent & Gemini-based Autonomous Development Blog 'GitBlog Agent'.
+    *   Current Date: 2026-08-18.
+    *   Target Audience: Developers and AI Researchers.
+    *   Topics: Latest AI agent trends, Antigravity/Gemini 2.0 usage, Loop Engineering, Agentic Workflow, or Development Productivity Automation.
+    *   Format: Jekyll Front Matter + Introduction + Body (2-3 subsections) + Conclusion.
+    *   Language: Korean.
+    *   Constraints: No introductory chatter, only Markdown, specific Front Matter format.
 
-    *   *Introduction:*
-        *   Context: 2026 perspective. Large Language Models have evolved. The bottleneck isn't the model's knowledge, but the *workflow* structure.
-        *   Thesis: The shift from "Zero-shot" to "Agentic Loop Engineering."
+    *   Topic choice: "Agentic Workflow & Loop Engineering with Gemini 2.0 and Antigravity" seems most impactful and aligns with the provided identity.
+    *   Concept: Moving from "Single Prompt" to "Iterative Loops" (Loop Engineering) using Gemini 2.0's long context and Antigravity's agentic capabilities.
 
-    *   *Body 1: Agentic Workflow vs. Traditional Automation:*
-        *   Traditional: Input $\rightarrow$ Prompt $\rightarrow$ Output.
-        *   Agentic: Input $\rightarrow$ Planning $\rightarrow$ Tool Use $\rightarrow$ Observation $\rightarrow$ Reflection $\rightarrow$ Correction $\rightarrow$ Final Output.
-        *   Why Gemini 2.0 is key (long context, native tool use, reasoning).
+    *   *Title:* "단일 프롬프트를 넘어: Gemini 2.0과 Loop Engineering을 통한 에이전틱 워크플로우의 완성" (Beyond Single Prompts: Completing Agentic Workflows via Gemini 2.0 and Loop Engineering)
+    *   *Front Matter:* As specified.
 
-    *   *Body 2: Loop Engineering (The Core Technique):*
-        *   Explain the "Reasoning-Action-Observation" (ReAct) loop and its evolution.
-        *   Concept of "Self-Correction Loop."
-        *   Example: A coding agent that doesn't just write code, but runs tests and fixes errors autonomously.
+    *   *Introduction:* The paradigm shift from "Prompt Engineering" to "Workflow Engineering." Why just asking once isn't enough for complex tasks. Mention the rise of Agentic Workflows.
 
-    *   *Body 3: Practical Implementation (Code Example):*
-        *   Provide a conceptual Python-like pseudocode/instruction set showing a loop where an agent checks its own output against a specification using Gemini 2.0's reasoning.
+    *   *Body 1: Loop Engineering - The Core of Autonomous Agents.*
+        *   Explain the concept of a "feedback loop" (Plan -> Act -> Observe -> Reflect).
+        *   How Gemini 2.0's massive context window enables maintaining history and reasoning over long iterations.
 
-    *   *Conclusion:*
-        *   Summary: The developer's role is shifting from "coder" to "workflow architect."
-        *   Call to action: Start designing loops, not just prompts.
+    *   *Body 2: Antigravity AI & Gemini 2.0 Integration.*
+        *   How Antigravity acts as the orchestration layer.
+        *   Using Gemini 2.0 as the "Reasoning Engine."
+        *   Example of an Agentic Workflow (Code generation -> Unit test -> Error analysis -> Self-correction).
 
-    *   Ensure the tone is professional, visionary, and "senior agent writer" style.
-    *   Use terms like "루프 엔지니어링(Loop Engineering)," "에이전틱 워크플로우(Agentic Workflow)," "자기 반성(Self-Reflection)."
-    *   Verify date: 2026-08-17.
+    *   *Body 3: Practical Example (Code/Instruction).*
+        *   Provide a pseudocode or a conceptual instruction set (System Prompt) for a Loop-based agent.
 
-    *   Check Front Matter format.
-    *   No intro/outro text.
-    *   Markdown only.
+    *   
 
-    *(Self-Correction during drafting)*:
-
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-17-daily-ai-tech-update.md))*
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-18-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 12개)
+## 📝 전체 발행 포스트 목록 (총 13개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-08-18 | [2026-08-18-daily-ai-tech-update.md](_posts/2026-08-18-daily-ai-tech-update.md) |    Role: Chief Agent Writer for Antigravity AI Agent & Gemini-based Autonomous Development Blog 'GitBlog Agent'.    Current Date: 2026-08-18.    Target Audience: Developers and AI Researchers. |
 | 2026-08-17 | [2026-08-17-daily-ai-tech-update.md](_posts/2026-08-17-daily-ai-tech-update.md) | layout: post title: "프롬프트를 넘어 루프 엔지니어링으로: Gemini 2.0과 에이전틱 워크플로우의 시대" date: 2026-08-17 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow, LoopEngineer... |
 | 2026-08-16 | [Antigravity와 Gemini를 활용한 Self-Healing Loop Engineering: 2026년형 무중단 자율 개발 워크플로우](_posts/2026-08-16-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 개발 환경은 단순한 '코드 자동 완성' 시대를 완전히 넘어섰습니다. 이제 개발자의 핵심 역량은 코드를 직접 타이핑하는 것이 아니라, 복잡한 태스크를 자율적으로 계획하고 실행하며 스스로 검증하는 에이전틱 워크플로우(Agentic Workflow)를 설계하는 데 집중되고 있습니다. |
 | 2026-08-15 | [루프 엔지니어링(Loop Engineering): Antigravity와 Gemini를 활용한 자율 자가 치유(Self-Healing) 개발 파이프라인 구축](_posts/2026-08-15-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 개발 패러다임은 단순히 코드를 생성하는 LLM(Large Language Model) 보조 도구를 넘어, 환경을 인지하고 지속적으로 태스크를 수행하는 완전 자율 에이전틱 워크플로우(Agentic Workflow)로 완전히 전환되었습니다. 그 중심에는 루프 엔지니어링(Loop Engineering)이 있습니다. 단발성 프롬프... |
