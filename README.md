@@ -9,67 +9,66 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [2026-08-19-daily-ai-tech-update.md](_posts/2026-08-19-daily-ai-tech-update.md)
-- **작성일**: `2026-08-19`
+### 📌 [2026-08-20-daily-ai-tech-update.md](_posts/2026-08-20-daily-ai-tech-update.md)
+- **작성일**: `2026-08-20`
 - **카테고리**: `AI` | **태그**: `Antigravity`
 
-> **핵심 요약**: layout: post title: "AI 개발의 패러다임 전환: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-19 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow...
+> **핵심 요약**: layout: post title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-20 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineering, ...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
 ---
         layout: post
-        title: "AI 개발의 패러다임 전환: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성"
-        date: 2026-08-19 09:00:00 +0900
+        title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성"
+        date: 2026-08-20 09:00:00 +0900
         categories: [AI, Automation]
-        tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow, LoopEngineering]
+        tags: [Antigravity, Gemini, AIAgent, LoopEngineering, AgenticWorkflow]
         ---
         ```
 
     *   *Introduction:*
-        *   Context: 2026 is an era where simple prompting is obsolete.
-        *   Problem: LLMs alone make mistakes.
-        *   Solution: Agentic workflows that use iterative loops (Plan-Act-Observe-Reflect).
+        *   State the shift in the AI landscape (2026 context).
+        *   Moving from "Prompting" to "Workflow Design."
+        *   Introduction of the concept: Why loops matter.
 
-    *   *Body 1: 에이전틱 워크플로우(Agentic Workflow)란 무엇인가?*
-        *   Definition: Moving away from Zero-shot to iterative processes.
-        *   Key elements: Tool use, planning, and multi-agent collaboration.
-        *   Mention Gemini's role (multimodality, large context window) as the "brain" of the agent.
+    *   *Body 1: 에이전틱 워크플로우와 루프 엔지니어링의 정의 (Defining Agentic Workflow & Loop Engineering)*
+        *   Difference between a linear chain (input -> output) and a loop (input -> reasoning -> action -> observation -> reflection -> output).
+        *   The concept of "Self-Correction."
 
-    *   *Body 2: 루프 엔지니어링(Loop Engineering): 완벽을 향한 반복의 미학*
-        *   The concept of "Self-Correction" and "Self-Reflection".
-        *   The loop: Thought -> Action -> Observation -> Refinement.
-        *   How Antigravity agents leverage this to solve complex coding tasks.
+    *   *Body 2: Gemini의 롱 컨텍스트(Long Context)가 루프 엔지니어링에 미치는 영향 (Impact of Gemini's Long Context)*
+        *   How large context windows allow the agent to remember previous iterations without losing quality.
+        *   How Antigravity utilizes this for autonomous dev tasks.
 
-    *   *Body 3: 실전 적용: Gemini 기반 자율 코딩 루프 설계하기*
-        *   Show a conceptual pseudo-code/prompting structure.
-        *   Focus on a "Reflexion" pattern.
-        *   Example: A developer agent that tests its own code.
+    *   *Body 3: [실전] 자기 수정형 코드 에이전트 구현 예시 (Practical Example: Self-Correcting Code Agent)*
+        *   Show a pseudo-code/conceptual loop using Gemini-style prompting logic.
+        *   Input: Task -> Generate Code -> Run Test -> Error? -> Refine -> Success.
 
     *   *Conclusion:*
-        *   Summary: Loop engineering is the key to reliability.
-        *   Future outlook: Autonomous agents will be our core teammates.
+        *   The future of development is managing loops, not writing every line of code.
+        *   Summary of the importance of loop engineering.
 
-    *   *Check:* Is it all Korean? Yes.
-    *   *Check:* Is the terminology correct? (Agentic Workflow, Loop Engineering, LLM, etc. are used naturally with Korean explanations).
-    *   *Check:* Is the tone professional and "Expert Writer-like"? Yes.
-    *   *Check:* No preamble/thinking text? Yes.
+    *   *Check:* Is everything in Korean? Yes.
+    *   *Check:* Are technical terms handled correctly? Yes (e.g., Long Context, Prompt, Agentic Workflow).
+    *   *Check:* Is the date correct? Yes.
+    *   *Check:* Is the persona maintained? Yes (professional, expert-level).
 
-    *   *Self-Correction during drafting:* Ensure I don't just talk about AI in general, but focus on *Development Agents*. Make sure "Antigravity" and "Gemini" are mentioned as the context/tooling.
+    *   *Title:* "단순한 답변을 넘어 실행으로: 루프 엔지니어링(Loop Engineering) 기반의 에이전틱 워크플로우 설계 전략"
+    *   *Keywords:* Antigravity, Gemini, Loop Engineering, Agentic Workflow.
 
-    *  
+    *(Self-Correction during drafting)*: Make sure the code example is clear. I
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-19-daily-ai-tech-update.md))*
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-20-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 14개)
+## 📝 전체 발행 포스트 목록 (총 15개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-08-20 | [2026-08-20-daily-ai-tech-update.md](_posts/2026-08-20-daily-ai-tech-update.md) | layout: post title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-20 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineering, ... |
 | 2026-08-19 | [2026-08-19-daily-ai-tech-update.md](_posts/2026-08-19-daily-ai-tech-update.md) | layout: post title: "AI 개발의 패러다임 전환: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-19 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow... |
 | 2026-08-18 | [[Mastering Agentic Workflows] Gemini 2.0과 Loop Engineering으로 구현하는 자율 코딩 에이전트](_posts/2026-08-18-daily-ai-tech-update.md) | 2026년 현재, LLM(대형 언어 모델)은 단순한 질의응답 챗봇을 완전히 넘어섰습니다. 이제 가장 중요한 핵심은 '무엇을 묻느냐(Prompting)'가 아니라 '어떤 흐름(Workflow)으로 AI를 자율 회전시키느냐'입니다. 오늘 포스트에서는 단일 프롬프트 완결 방식의 한계를 극복하고, Antigravity AI 프레임워크와 Gemini 2.0 추... |
 | 2026-08-17 | [프롬프트를 넘어 루프 엔지니어링으로: Gemini 2.0과 에이전틱 워크플로우의 시대](_posts/2026-08-17-daily-ai-tech-update.md) | 2026년 현재, AI 기술의 거대한 병목은 더 이상 AI 모델 자체의 지식 한계가 아닙니다. 이제 성공적인 개발을 가르는 핵심 요소는 '어떤 질문을 할 것인가'가 아니라 '어떤 순환 워크플로우(Workflow)로 에이전트를 회전시킬 것인가'에 있습니다. 단순 단발성 질문(Zero-shot)에 의존하던 방식에서 벗어나, 에이전트가 목표를 계획하고 실행... |
