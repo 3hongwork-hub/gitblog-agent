@@ -162,6 +162,32 @@ def discover_active_endpoints(api_key):
         print(f"Discovered {len(discovered)} active generateContent endpoints from Google API.")
     return discovered
 
+def is_valid_korean_article(text):
+    """Verify that generated text is a complete, full Korean article without thinking/outline artifacts."""
+    if not text or len(text.strip()) < 500:
+        return False
+    
+    # Must have front matter
+    if not text.startswith("---"):
+        return False
+    
+    # Check for unwanted thinking / outline keywords
+    forbidden_tokens = [
+        "*Introduction:*", "*Body 1:*", "*Body 2:*", "*Check:*",
+        "Role: Chief Agent Writer", "Drafting Body", "Proceed to generate output",
+        "*Topic Selection:*", "*Tone:*", "*Content Detail:*"
+    ]
+    for token in forbidden_tokens:
+        if token.lower() in text.lower():
+            return False
+            
+    # Check Korean character existence (must have substantial Korean text)
+    korean_chars = re.findall(r'[가-힣]', text)
+    if len(korean_chars) < 200:
+        return False
+        
+    return True
+
 def generate_blog_post():
     raw_api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
     is_github_actions = os.environ.get("GITHUB_ACTIONS") == "true"
@@ -182,23 +208,30 @@ def generate_blog_post():
 
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
     
-    prompt = f"""
-너는 안티그래비티(Antigravity) AI 에이전트와 Gemini 기반 자율 개발 블로그 'GitBlog Agent'의 수석 한국어 전문 에이전트 작가야.
-오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 최신 AI 개발 에이전트 동향, 안티그래비티(Antigravity) 및 Gemini 활용법, 루프 엔지니어링(Loop Engineering), 에이전틱 워크플로우(Agentic Workflow), 또는 개발 생산성 자동화 팁 중 하나를 주제로 흥미롭고 유익한 블로그 포스트를 100% 자연스럽고 완벽한 한국어로 작성해줘.
+    system_instruction_text = (
+        "당신은 기술 전문 블로그 'GitBlog Agent'의 수석 한국어 테크 블로거입니다.\n"
+        "지침:\n"
+        "1. 생각 과정(Thinking), 개요(Outline), 기획 메모, 영문 체크리스트 등은 일절 출력하지 마십시오.\n"
+        "2. 반드시 첫 줄부터 Jekyll Front Matter('---')로 시작하여, 서론 - 본론(소제목 3개 이상) - 실전 코드 예시(코드 주석 한국어) - 결론까지 1500자 이상의 완성된 포스트 본문 전문을 100% 매끄럽고 친절한 한국어로만 작성하여 출력하십시오."
+    )
 
-다음 지침을 반드시 준수해줘:
-1. **모든 본문, 소제목, 설명, 요약은 100% 한국어로 작성해야 해.** (기술 전문 용어, 코드 키워드, 제품명만 영문 병행 허용)
-2. 최상단에는 반드시 아래 형식의 Jekyll 프론트 매터(Front Matter)로 시작해야 하며, 서론 앞에 어떤 생각 과정(Thinking)이나 영문 서술 텍스트도 절대 포함하지 마:
+    prompt = f"""
+오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 다음 주제 중 하나를 선택하여 완성도 높은 기술 블로그 포스트를 100% 자연스럽고 완벽한 한국어로 작성해줘:
+- 최신 AI 개발 에이전트 동향 및 자율 배포 워크플로우
+- 안티그래비티(Antigravity) 및 Gemini 활용법
+- 루프 엔지니어링(Loop Engineering) 및 에이전틱 워크플로우(Agentic Workflow)
+- 자가 치유(Self-Healing) 개발 생산성 자동화 팁
+
+작성 형식:
 ---
 layout: post
-title: "주제에 어울리는 매력적인 한국어 제목"
+title: "매력적인 한국어 제목"
 date: {today_str} 09:00:00 +0900
 categories: [AI, Automation]
-tags: [Antigravity, Gemini, AIAgent, Automation]
+tags: [Antigravity, Gemini, AIAgent, Automation, LoopEngineering]
 ---
-3. 서론 - 본론(2~3개 세부 한국어 소제목) - 결론 구조로 완성도 높게 작성해줘.
-4. 실전 예시 코드나 지시서 예시가 필요하다면 마크다운 코드 블록(```)을 사용하고, 코드 주석 및 설명도 한국어로 작성해줘.
-5. 오직 마크다운 포맷 텍스트만 출력해줘.
+
+(이어서 서론, 소제목 본문 3개, 코드 블록, 결론까지 완성된 한국어 본문을 바로 작성)
 """
 
     discovered_endpoints = discover_active_endpoints(api_key)
@@ -222,9 +255,16 @@ tags: [Antigravity, Gemini, AIAgent, Automation]
     for base_url in endpoints_to_try:
         url = f"{base_url}?key={api_key}"
         payload = {
+            "system_instruction": {
+                "parts": [{"text": system_instruction_text}]
+            },
             "contents": [{
                 "parts": [{"text": prompt}]
-            }]
+            }],
+            "generationConfig": {
+                "temperature": 0.7,
+                "maxOutputTokens": 4096
+            }
         }
 
         req = urllib.request.Request(
@@ -237,9 +277,29 @@ tags: [Antigravity, Gemini, AIAgent, Automation]
             try:
                 with urllib.request.urlopen(req) as response:
                     res_data = json.loads(response.read().decode("utf-8"))
-                    generated_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
-                    print(f"Successfully generated content using endpoint: {base_url}")
-                    break
+                    raw_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
+                    
+                    # Clean markdown wrappers
+                    cleaned = raw_text.strip()
+                    if cleaned.startswith("```markdown"):
+                        cleaned = cleaned[11:]
+                    if cleaned.startswith("```"):
+                        cleaned = cleaned[3:]
+                    if cleaned.endswith("```"):
+                        cleaned = cleaned[:-3]
+                    cleaned = cleaned.strip()
+
+                    fm_pos = cleaned.find("---")
+                    if fm_pos != -1:
+                        cleaned = cleaned[fm_pos:]
+
+                    if is_valid_korean_article(cleaned):
+                        generated_text = cleaned
+                        print(f"Successfully generated full Korean article using endpoint: {base_url}")
+                        break
+                    else:
+                        print(f"Output from {base_url} contained outline/invalid text. Trying next model...")
+                        break
             except urllib.error.HTTPError as e:
                 err_body = ""
                 try:
@@ -270,20 +330,6 @@ tags: [Antigravity, Gemini, AIAgent, Automation]
             break
 
     if generated_text:
-        # Strip any code block backticks if wrapped
-        if generated_text.startswith("```markdown"):
-            generated_text = generated_text[11:]
-        if generated_text.startswith("```"):
-            generated_text = generated_text[3:]
-        if generated_text.endswith("```"):
-            generated_text = generated_text[:-3]
-        generated_text = generated_text.strip()
-
-        # Ensure text starts at first Jekyll front matter '---'
-        fm_pos = generated_text.find("---")
-        if fm_pos != -1:
-            generated_text = generated_text[fm_pos:]
-
         os.makedirs("_posts", exist_ok=True)
         filename = f"_posts/{today_str}-daily-ai-tech-update.md"
         with open(filename, "w", encoding="utf-8") as f:

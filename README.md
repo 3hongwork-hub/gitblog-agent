@@ -9,54 +9,73 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [2026-08-20-daily-ai-tech-update.md](_posts/2026-08-20-daily-ai-tech-update.md)
+### 📌 [단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성](_posts/2026-08-20-daily-ai-tech-update.md)
 - **작성일**: `2026-08-20`
-- **카테고리**: `AI` | **태그**: `Antigravity`
+- **카테고리**: `AI, Automation` | **태그**: `Antigravity`
 
-> **핵심 요약**: layout: post title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-20 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineering, ...
+> **핵심 요약**: 2026년 현재, 소프트웨어 엔지니어링의 최전선은 단순히 'AI에게 무엇을 물어볼 것인가(Prompting)'를 고민하는 시대를 지나, 'AI 에이전트가 어떤 순환 고리(Loop)를 돌며 자율적으로 코드를 완성하게 할 것인가'에 집중되고 있습니다. 단일 프롬프트(Single-shot) 방식은 복잡한 프로젝트에서 필연적으로 오류를 발생시킵니다. 이를 극...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
+2026년 현재, 소프트웨어 엔지니어링의 최전선은 단순히 'AI에게 무엇을 물어볼 것인가(Prompting)'를 고민하는 시대를 지나, **'AI 에이전트가 어떤 순환 고리(Loop)를 돌며 자율적으로 코드를 완성하게 할 것인가'**에 집중되고 있습니다.
+
+단일 프롬프트(Single-shot) 방식은 복잡한 프로젝트에서 필연적으로 오류를 발생시킵니다. 이를 극복하고 신뢰성 높은 결과물을 얻기 위해 고안된 것이 바로 **루프 엔지니어링(Loop Engineering)**입니다.
+
+이번 포스트에서는 Antigravity AI 프레임워크와 Gemini 2.0 추론 엔진을 기반으로, 자가 치유(Self-Healing) 및 자율 검증을 수행하는 실전 에이전틱 워크플로우 설계 전략을 정리합니다.
+
 ---
-        layout: post
-        title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성"
-        date: 2026-08-20 09:00:00 +0900
-        categories: [AI, Automation]
-        tags: [Antigravity, Gemini, AIAgent, LoopEngineering, AgenticWorkflow]
-        ---
-        ```
 
-    *   *Introduction:*
-        *   State the shift in the AI landscape (2026 context).
-        *   Moving from "Prompting" to "Workflow Design."
-        *   Introduction of the concept: Why loops matter.
+## 1. 선형적 구조와 순환적 루프의 차이
 
-    *   *Body 1: 에이전틱 워크플로우와 루프 엔지니어링의 정의 (Defining Agentic Workflow & Loop Engineering)*
-        *   Difference between a linear chain (input -> output) and a loop (input -> reasoning -> action -> observation -> reflection -> output).
-        *   The concept of "Self-Correction."
+기존의 단순 자동화와 에이전틱 워크플로우의 본질적인 차이는 '피드백 루프의 유무'에 있습니다:
 
-    *   *Body 2: Gemini의 롱 컨텍스트(Long Context)가 루프 엔지니어링에 미치는 영향 (Impact of Gemini's Long Context)*
-        *   How large context windows allow the agent to remember previous iterations without losing quality.
-        *   How Antigravity utilizes this for autonomous dev tasks.
+* **기존 선형 방식**: `입력 → 프롬프트 → 코드 생성 → 오류 발생 시 사람이 직접 수정`
+* **루프 엔지니어링 방식**: `목표 입력 → 계획 수립 → 코드 작성 → 샌드박스 실행 → 결과 관찰 → 자가 반추 → 자율 수정 → 최종 통과`
 
-    *   *Body 3: [실전] 자기 수정형 코드 에이전트 구현 예시 (Practical Example: Self-Correcting Code Agent)*
-        *   Show a pseudo-code/conceptual loop using Gemini-style prompting logic.
-        *   Input: Task -> Generate Code -> Run Test -> Error? -> Refine -> Success.
+Gemini 모델의 초거대 컨텍스트 창은 에이전트가 이전 회차에서 실패했던 스택트레이스와 수정 시도를 완벽하게 기억하며 점진적으로 정답에 수렴할 수 있도록 돕습니다.
 
-    *   *Conclusion:*
-        *   The future of development is managing loops, not writing every line of code.
-        *   Summary of the importance of loop engineering.
+---
 
-    *   *Check:* Is everything in Korean? Yes.
-    *   *Check:* Are technical terms handled correctly? Yes (e.g., Long Context, Prompt, Agentic Workflow).
-    *   *Check:* Is the date correct? Yes.
-    *   *Check:* Is the persona maintained? Yes (professional, expert-level).
+## 2. 자가 수정형 코드 에이전트의 3대 핵심 메커니즘
 
-    *   *Title:* "단순한 답변을 넘어 실행으로: 루프 엔지니어링(Loop Engineering) 기반의 에이전틱 워크플로우 설계 전략"
-    *   *Keywords:* Antigravity, Gemini, Loop Engineering, Agentic Workflow.
+1. **격리된 실행 샌드박스 (Sandboxed Environment)**: 생성된 코드가 메인 브랜치나 운영 환경에 영향을 주지 않도록 격리된 가상 브랜치/도커 환경에서 단위 테스트를 수행합니다.
+2. **정적 분석기 및 린터 가드레일 (Linter & Type Checking)**: `ruff`, `eslint`, `tsc` 등을 워크플로우에 연동하여 문법적 결함을 1차적으로 에이전트 스스로 잡아냅니다.
+3. **상태 영속성(Persistence)과 롤백**: 수정 방향이 잘못되었을 경우 이전 상태로 롤백하고 새로운 해결 가설을 수립하는 탐색 알고리즘을 유지합니다.
 
-    *(Self-Correction during drafting)*: Make sure the code example is clear. I
+---
+
+## 3. 실전: 자가 수정형 에이전틱 워크플로우 코드 예시
+
+아래는 Python과 Gemini API를 활용하여 자율적으로 테스트를 검수하고 오류를 스스로 고치는 에이전트 루프의 핵심 로직 예시입니다.
+
+```python
+import os
+import time
+from google import genai
+
+# 1. Gemini 클라이언트 초기화
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
+
+def self_healing_agent_loop(task_requirement: str, max_retries: int = 3):
+    print(f"🎯 자율 개발 작업 시작: {task_requirement}")
+    current_prompt = task_requirement
+    history_logs = []
+    
+    for attempt in range(1, max_retries + 1):
+        print(f"\n[🔄 루프 {attempt}/{max_retries}] 에이전트 추론 및 코드 패치 생성 중...")
+        
+        response = client.models.generate_content(
+            model="gemini-2.0-flash",
+            contents=f"요구사항: {current_prompt}\n이전 시도 기록: {history_logs}"
+        )
+        
+        # 가상의 테스트 실행 및 검증 (PyTest / Jest)
+        # 실제 환경에서는 실행된 프로세스의 exit code를 확인합니다.
+        test_success = True
+        
+        if test_success:
+            print
 
 *(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-20-daily-ai-tech-update.md))*
 
@@ -68,8 +87,8 @@
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
-| 2026-08-20 | [2026-08-20-daily-ai-tech-update.md](_posts/2026-08-20-daily-ai-tech-update.md) | layout: post title: "단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-20 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, LoopEngineering, ... |
-| 2026-08-19 | [2026-08-19-daily-ai-tech-update.md](_posts/2026-08-19-daily-ai-tech-update.md) | layout: post title: "AI 개발의 패러다임 전환: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성" date: 2026-08-19 09:00:00 +0900 categories: [AI, Automation] tags: [Antigravity, Gemini, AIAgent, AgenticWorkflow... |
+| 2026-08-20 | [단순한 질의응답을 넘어: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성](_posts/2026-08-20-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 엔지니어링의 최전선은 단순히 'AI에게 무엇을 물어볼 것인가(Prompting)'를 고민하는 시대를 지나, 'AI 에이전트가 어떤 순환 고리(Loop)를 돌며 자율적으로 코드를 완성하게 할 것인가'에 집중되고 있습니다. 단일 프롬프트(Single-shot) 방식은 복잡한 프로젝트에서 필연적으로 오류를 발생시킵니다. 이를 극... |
+| 2026-08-19 | [AI 개발의 패러다임 전환: 루프 엔지니어링(Loop Engineering)을 통한 에이전틱 워크플로우의 완성](_posts/2026-08-19-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 개발 환경은 단순한 일회성 질문에 코드를 반환받는 프롬프트 엔지니어링 시대를 지나, AI가 자율적으로 목표를 설정하고 결과를 검증하는 에이전틱 워크플로우(Agentic Workflow) 시대로 완전히 진입했습니다. 단일 프롬프트 방식의 가장 큰 한계는 AI가 생성한 코드에 오류가 있을 때 개발자가 직접 에러를 복사하여 다시... |
 | 2026-08-18 | [[Mastering Agentic Workflows] Gemini 2.0과 Loop Engineering으로 구현하는 자율 코딩 에이전트](_posts/2026-08-18-daily-ai-tech-update.md) | 2026년 현재, LLM(대형 언어 모델)은 단순한 질의응답 챗봇을 완전히 넘어섰습니다. 이제 가장 중요한 핵심은 '무엇을 묻느냐(Prompting)'가 아니라 '어떤 흐름(Workflow)으로 AI를 자율 회전시키느냐'입니다. 오늘 포스트에서는 단일 프롬프트 완결 방식의 한계를 극복하고, Antigravity AI 프레임워크와 Gemini 2.0 추... |
 | 2026-08-17 | [프롬프트를 넘어 루프 엔지니어링으로: Gemini 2.0과 에이전틱 워크플로우의 시대](_posts/2026-08-17-daily-ai-tech-update.md) | 2026년 현재, AI 기술의 거대한 병목은 더 이상 AI 모델 자체의 지식 한계가 아닙니다. 이제 성공적인 개발을 가르는 핵심 요소는 '어떤 질문을 할 것인가'가 아니라 '어떤 순환 워크플로우(Workflow)로 에이전트를 회전시킬 것인가'에 있습니다. 단순 단발성 질문(Zero-shot)에 의존하던 방식에서 벗어나, 에이전트가 목표를 계획하고 실행... |
 | 2026-08-16 | [Antigravity와 Gemini를 활용한 Self-Healing Loop Engineering: 2026년형 무중단 자율 개발 워크플로우](_posts/2026-08-16-daily-ai-tech-update.md) | 2026년 현재, 소프트웨어 개발 환경은 단순한 '코드 자동 완성' 시대를 완전히 넘어섰습니다. 이제 개발자의 핵심 역량은 코드를 직접 타이핑하는 것이 아니라, 복잡한 태스크를 자율적으로 계획하고 실행하며 스스로 검증하는 에이전틱 워크플로우(Agentic Workflow)를 설계하는 데 집중되고 있습니다. |
