@@ -167,11 +167,9 @@ def is_valid_korean_article(text):
     if not text or len(text.strip()) < 500:
         return False
     
-    # Must have front matter
     if not text.startswith("---"):
         return False
     
-    # Check for unwanted thinking / outline keywords
     forbidden_tokens = [
         "*Introduction:*", "*Body 1:*", "*Body 2:*", "*Check:*",
         "Role: Chief Agent Writer", "Drafting Body", "Proceed to generate output",
@@ -181,12 +179,22 @@ def is_valid_korean_article(text):
         if token.lower() in text.lower():
             return False
             
-    # Check Korean character existence (must have substantial Korean text)
     korean_chars = re.findall(r'[가-힣]', text)
     if len(korean_chars) < 200:
         return False
         
     return True
+
+def get_recent_post_titles(limit=15):
+    """Fetch the titles of recently published posts to avoid duplicate topics."""
+    post_files = glob.glob("_posts/*.md")
+    post_files.sort(reverse=True)
+    recent_titles = []
+    for fp in post_files[:limit]:
+        p = parse_post(fp)
+        if p["title"] and p["title"] != p["filename"]:
+            recent_titles.append(f"- {p['title']} ({p['date']})")
+    return "\n".join(recent_titles) if recent_titles else "- (기존 포스트 없음)"
 
 def generate_blog_post():
     raw_api_key = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -205,33 +213,51 @@ def generate_blog_post():
 
     # Clean whitespace or surrounding quotes from secret value
     api_key = raw_api_key.strip().strip('"').strip("'")
-
     today_str = datetime.datetime.now().strftime("%Y-%m-%d")
-    
+    recent_titles_str = get_recent_post_titles(15)
+
     system_instruction_text = (
-        "당신은 기술 전문 블로그 'GitBlog Agent'의 수석 한국어 테크 블로거입니다.\n"
-        "지침:\n"
+        "당신은 IT/소프트웨어 엔지니어링 및 AI 기술 전문 블로그 'GitBlog Agent'의 수석 테크 블로거입니다.\n"
+        "작성 원칙:\n"
         "1. 생각 과정(Thinking), 개요(Outline), 기획 메모, 영문 체크리스트 등은 일절 출력하지 마십시오.\n"
-        "2. 반드시 첫 줄부터 Jekyll Front Matter('---')로 시작하여, 서론 - 본론(소제목 3개 이상) - 실전 코드 예시(코드 주석 한국어) - 결론까지 1500자 이상의 완성된 포스트 본문 전문을 100% 매끄럽고 친절한 한국어로만 작성하여 출력하십시오."
+        "2. 반드시 첫 줄부터 Jekyll Front Matter('---')로 시작하여 서론, 본론(소제목 3개 이상), 실전 코드/아키텍처 예시(코드 주석 한국어), 결론까지 1500자 이상의 완성된 포스트 본문 전문을 100% 매끄러운 한국어로 작성하십시오.\n"
+        "3. 이전에 이미 다룬 주제와 내용이 중복되지 않도록 완전히 새로운 기술 도메인과 신선한 시각의 주제를 선정하여 작성하십시오."
     )
 
     prompt = f"""
-오늘 날짜({today_str})를 기준으로 개발자 및 AI 연구자들을 위해 다음 주제 중 하나를 선택하여 완성도 높은 기술 블로그 포스트를 100% 자연스럽고 완벽한 한국어로 작성해줘:
-- 최신 AI 개발 에이전트 동향 및 자율 배포 워크플로우
-- 안티그래비티(Antigravity) 및 Gemini 활용법
-- 루프 엔지니어링(Loop Engineering) 및 에이전틱 워크플로우(Agentic Workflow)
-- 자가 치유(Self-Healing) 개발 생산성 자동화 팁
+오늘 날짜({today_str})를 기준으로 개발자 및 AI 엔지니어들을 위해 기술 블로그 포스트를 100% 자연스럽고 완벽한 한국어로 작성해줘.
+
+[최근에 이미 발행된 포스트 제목 목록]:
+{recent_titles_str}
+
+[중복 방지 및 주제 다양화 필수 지침]:
+- 위 [최근에 이미 발행된 포스트 목록]과 **내용이나 핵심 키워드가 겹치지 않는 완전히 새로운 주제**를 선정해야 해.
+- 다음과 같은 다채로운 최신 IT/AI 개발 엔지니어링 주제 풀 중에서 이전과 중복되지 않는 주제를 하나 선택해줘:
+  1. 현대적 검색 및 RAG 아키텍처 (GraphRAG, Hybrid Search, Contextual Chunking, Re-ranking)
+  2. 에이전트 평가 및 벤치마크 (SWE-bench, LLM-as-a-Judge, Golden Eval Dataset)
+  3. 엔터프라이즈 도구 연동 표준 (Model Context Protocol 2.0, FastMCP, OpenAPI Tooling)
+  4. 고성능 로컬/클라우드 LLM 추론 인프라 (vLLM, PagedAttention, SGLang, Prefix Caching)
+  5. 선언적 프롬프트 프로그래밍 (DSPy, Teleprompter, 자동 Few-shot 최적화)
+  6. 상태 기반 멀티에이전트 오케스트레이션 (LangGraph, Subgraphs, State Machine, AutoGen)
+  7. 프론트엔드/풀스택 AI 엔지니어링 (Next.js 15 Server Actions + Vercel AI SDK, Generative UI)
+  8. AI 보안 및 가드레일 (Prompt Injection 방어, OWASP Top 10 for LLM, NeMo Guardrails)
+  9. LLM 옵저버빌리티 및 트레이싱 (LangSmith, Arize Phoenix, OpenTelemetry 트레이싱)
+  10. 온디바이스 AI 및 소형 모델 최적화 (Ollama, WebGPU, AWQ/GGUF 양자화, Apple MLX)
+  11. 데이터 엔지니어링 및 분석 에이전트 (Text-to-SQL, DuckDB + Apache Arrow, 데이터 파이프라인)
+  12. 실시간 멀티모달 스트리밍 (WebRTC 기반 음성/비전 AI 에이전트 구축)
+  13. 클라우드 네이티브 MLOps (KEDA 기반 GPU 오토스케일링, Kubernetes Ray Cluster)
+  14. 사후 학습 및 파인튜닝 (LoRA, QLoRA, DPO, RLHF 실전 파이프라인)
 
 작성 형식:
 ---
 layout: post
-title: "매력적인 한국어 제목"
+title: "선택한 주제에 어울리는 구체적이고 매력적인 한국어 제목"
 date: {today_str} 09:00:00 +0900
-categories: [AI, Automation]
-tags: [Antigravity, Gemini, AIAgent, Automation, LoopEngineering]
+categories: [AI, Architecture]
+tags: [주제에맞는태그1, 주제에맞는태그2, 주제에맞는태그3]
 ---
 
-(이어서 서론, 소제목 본문 3개, 코드 블록, 결론까지 완성된 한국어 본문을 바로 작성)
+(이어서 서론, 소제목 본문 3개, 실전 코드/설정 블록, 결론까지 완성된 한국어 본문을 바로 작성)
 """
 
     discovered_endpoints = discover_active_endpoints(api_key)
@@ -262,7 +288,7 @@ tags: [Antigravity, Gemini, AIAgent, Automation, LoopEngineering]
                 "parts": [{"text": prompt}]
             }],
             "generationConfig": {
-                "temperature": 0.7,
+                "temperature": 0.8,
                 "maxOutputTokens": 4096
             }
         }
@@ -279,7 +305,6 @@ tags: [Antigravity, Gemini, AIAgent, Automation, LoopEngineering]
                     res_data = json.loads(response.read().decode("utf-8"))
                     raw_text = res_data["candidates"][0]["content"]["parts"][0]["text"]
                     
-                    # Clean markdown wrappers
                     cleaned = raw_text.strip()
                     if cleaned.startswith("```markdown"):
                         cleaned = cleaned[11:]
