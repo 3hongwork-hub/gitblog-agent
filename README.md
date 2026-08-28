@@ -9,68 +9,76 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [Next.js 15 Server Actions와 Vercel AI SDK로 구현하는 실시간 Generative UI 아키텍처](_posts/2026-08-27-daily-ai-tech-update.md)
-- **작성일**: `2026-08-27`
-- **카테고리**: `Frontend, AI` | **태그**: `Antigravity`
+### 📌 [Kubernetes와 Ray Cluster 기반 클라우드 네이티브 MLOps: 대규모 분산 추론 및 학습 오토스케일링 실전](_posts/2026-08-28-daily-ai-tech-update.md)
+- **작성일**: `2026-08-28`
+- **카테고리**: `MLOps, CloudNative` | **태그**: `Antigravity`
 
-> **핵심 요약**: AI 애플리케이션의 사용자 경험(UX)은 단순한 텍스트 스트리밍을 넘어, 사용자의 의도와 데이터 구조에 맞추어 UI 컴포넌트 자체가 실시간으로 생성되고 진화하는 Generative UI의 시대로 접어들었습니다. 과거에는 LLM이 반환하는 JSON 데이터를 프론트엔드에서 일일이 파싱하여 조건문으로 분기 처리해야 했지만, 오늘날에는 모던 프레임워크와 AI...
+> **핵심 요약**: AI 모델의 규모가 기하급수적으로 커지고 실시간 처리 요구사항이 거세짐에 따라, 단일 노드 기반의 인프라는 이미 한계에 다다른 지 오래입니다. 대규모 언어 모델(LLM)의 파인튜닝, 멀티모달 데이터의 분산 학습, 그리고 수천 명의 동시 사용자를 처리해야 하는 고성능 추론 서빙 환경에서는 효율적인 클라우드 네이티브 오케스트레이션이 필수적입니다.
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-AI 애플리케이션의 사용자 경험(UX)은 단순한 텍스트 스트리밍을 넘어, 사용자의 의도와 데이터 구조에 맞추어 UI 컴포넌트 자체가 실시간으로 생성되고 진화하는 **Generative UI**의 시대로 접어들었습니다. 과거에는 LLM이 반환하는 JSON 데이터를 프론트엔드에서 일일이 파싱하여 조건문으로 분기 처리해야 했지만, 오늘날에는 모던 프레임워크와 AI SDK의 결합으로 서버 사이드에서 직접 컴포넌트를 스트리밍하고 클라이언트와 유기적으로 동기화할 수 있게 되었습니다.
+AI 모델의 규모가 기하급수적으로 커지고 실시간 처리 요구사항이 거세짐에 따라, 단일 노드 기반의 인프라는 이미 한계에 다다른 지 오래입니다. 대규모 언어 모델(LLM)의 파인튜닝, 멀티모달 데이터의 분산 학습, 그리고 수천 명의 동시 사용자를 처리해야 하는 고성능 추론 서빙 환경에서는 효율적인 클라우드 네이티브 오케스트레이션이 필수적입니다. 
 
-이번 포스트에서는 최신 **Next.js 15**의 App Router와 **Server Actions**, 그리고 **Vercel AI SDK**를 유기적으로 결합하여, LLM의 응답에 따라 동적으로 UI를 렌더링하고 상태를 관리하는 실전 Generative UI 아키텍처 구축 방법을 깊이 있게 다룹니다.
-
----
-
-### 1. Next.js 15 App Router와 AI SDK 통합 패러다임
-
-Next.js 15는 비동기 요청 객체 처리 방식의 개선과 더불어 서버 컴포넌트(RSC)와 서버 액션(Server Actions)의 성능을 극대화했습니다. 특히 AI 애플리케이션 개발에 있어 클라이언트와 서버 간의 스트리밍 통신이 필수적이므로, Next.js의 스트리밍 아키텍처와 Vercel AI SDK의 `streamText` 및 `createAI` 유틸리티는 완벽한 궁합을 자랑합니다.
-
-전통적인 방식은 클라이언트가 API 라우트를 호출하고, 서버가 텍스트를 스트리밍한 뒤 클라이언트가 이를 상태에 저장하는 구조였습니다. 반면, Next.js 15의 Server Actions를 활용하면 별도의 REST/GraphQL 엔드포인트 정의 없이 컴포넌트 내부에서 직접 서버 측 LLM 로직을 호출하고, 리액트의 `useActionState`나 AI SDK의 리액트 훅(`useChat`)을 통해 실시간 반응형 UI를 구성할 수 있습니다.
-
-이 과정에서 가장 중요한 점은 LLM이 단순히 텍스트를 출력하는 것이 아니라, 구조화된 도구 호출(Tool Calling) 메커니즘을 통해 클라이언트에게 특정 리액트 컴포넌트를 렌더링하도록 지시(Payload 전달)하는 것입니다.
+특히 쿠버네티스(Kubernetes) 환경에서 분산 AI 작업을 조율할 때, **Ray Cluster**와 **KEDA(Kubernetes Event-driven Autoscaling)**의 결합은 현대 MLOps 엔지니어에게 가장 강력한 무기를 제공합니다. 이번 포스트에서는 쿠버네티스 위에서 Ray와 KEDA를 연동하여 트래픽 부하와 GPU 자원 사용량에 따라 동적으로 확장되는 분산 MLOps 파이프라인을 구축하는 실전 아키텍처와 코드를 살펴보겠습니다.
 
 ---
 
-### 2. 도구 호출(Tool Calling) 기반 Generative UI 설계
+### 1. 왜 Kubernetes와 Ray, 그리고 KEDA의 결합인가?
 
-Generative UI의 핵심은 **"LLM에게 컴포넌트 렌더링 권한을 위임하되, 엄격한 타입 안정성을 보장하는 것"**입니다. Vercel AI SDK는 `tool` 함수를 통해 AI가 호출할 수 있는 함수 정의를 지원하며, Zod를 이용해 스키마를 검증합니다.
+전통적인 클라우드 인프라에서는 GPU 인스턴스를 고정적으로 할당해 두거나, 수동으로 스케일링을 관리했습니다. 하지만 AI 워크로드의 특성상 배치 작업 시에는 엄청난 수의 GPU가 필요하지만, 유휴 시간대에는 비용 낭비로 이어집니다. 
 
-아래는 사용자의 요청에 따라 날씨 정보 카드나 주가 차트 컴포넌트를 동적으로 생성하도록 설계된 서버 액션 및 도구 정의 코드의 실전 예시입니다.
+* **Kubernetes:** 컨테이너화된 워크로드의 표준 배포 및 리소스 격리를 담당합니다.
+* **Ray:** Python 기반의 분산 컴퓨팅 프레임워크로, 데이터 처리, 머신러닝 학습, 그리고 LLM 추론을 여러 노드에 걸쳐 매끄럽게 병렬화합니다.
+* **KEDA:** 쿠버네티스의 기본 HPA(Horizontal Pod Autoscaler)의 한계를 뛰어넘어, 큐의 길이(Queue Length), 커스텀 메트릭, 또는 프로메테우스(Prometheus) 메트릭을 기반으로 제로(0) 스케일링까지 지원하는 이벤트 기반 오토스케일러입니다.
 
-```typescript
-// app/actions.ts
-'use server';
+이 세 가지 기술이 결합하면, 추론 요청 큐에 데이터가 쌓이거나 분산 학습 작업이 제출되는 순간 자동으로 클러스터가 확장되고, 작업이 끝나면 비용 절감을 위해 즉각적으로 자원을 반환하는 진정한 의미의 클라우드 네이티브 MLOps 환경이 완성됩니다.
 
-import { streamText, tool } from 'ai';
-import { google } from '@ai-sdk/google';
-import { z } from 'zod';
+---
 
-export async function submitUserMessage(messages: Array<any>) {
-  // Gemini 모델을 활용한 스트리밍 텍스트 및 도구 호출 설정
-  const result = await streamText({
-    model: google('gemini-2.5-flash'),
-    messages,
-    system: '너는 친절한 AI 어시스턴트이며, 사용자 요청에 맞는 시각적 컴포넌트 도구를 적극 활용해.',
-    tools: {
-      // 1. 날씨 정보 UI 컴포넌트 생성 도구
-      renderWeatherCard: tool({
-        description: '특정 지역의 날씨 정보를 시각적 카드 UI로 렌더링합니다.',
-        parameters: z.object({
-          location: z.string().describe('도시 이
+### 2. Ray Operator와 KEDA를 활용한 분산 아키텍처 설계
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-27-daily-ai-tech-update.md))*
+전체 시스템은 Kubernetes Custom Resource Definition(CRD) 기반의 KubeRay Operator와 KEDA ScaledObject로 구성됩니다. 사용자가 분산 학습이나 대규모 추론 작업을 요청하면 Ray Job이 생성되고, KEDA는 Prometheus를 통해 Ray 헤드 노드의 큐 상태(예: 대기 중인 작업 수)를 모니터링합니다.
+
+아래는 KEDA가 Ray 워커 노드의 개수를 동적으로 조절할 수 있도록 정의한 `ScaledObject` 매니페스트 예시입니다. 이 설정은 프로메테우스 메트릭을 참조하여 대기 중인 태스크가 임계치를 넘을 때 워커 파드를 수평 확장합니다.
+
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ray-worker-autoscaler
+  namespace: ray-system
+spec:
+  scaleTargetRef:
+    apiVersion: ray.io/v1
+    kind: RayCluster
+    name: cluster-ml-train
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  cooldownPeriod: 300
+  pollingInterval: 15
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 300
+          policies:
+          - type: Percent
+            value: 50
+            periodSeconds: 60
+  trig
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-08-28-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 22개)
+## 📝 전체 발행 포스트 목록 (총 23개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-08-28 | [Kubernetes와 Ray Cluster 기반 클라우드 네이티브 MLOps: 대규모 분산 추론 및 학습 오토스케일링 실전](_posts/2026-08-28-daily-ai-tech-update.md) | AI 모델의 규모가 기하급수적으로 커지고 실시간 처리 요구사항이 거세짐에 따라, 단일 노드 기반의 인프라는 이미 한계에 다다른 지 오래입니다. 대규모 언어 모델(LLM)의 파인튜닝, 멀티모달 데이터의 분산 학습, 그리고 수천 명의 동시 사용자를 처리해야 하는 고성능 추론 서빙 환경에서는 효율적인 클라우드 네이티브 오케스트레이션이 필수적입니다. |
 | 2026-08-27 | [Next.js 15 Server Actions와 Vercel AI SDK로 구현하는 실시간 Generative UI 아키텍처](_posts/2026-08-27-daily-ai-tech-update.md) | AI 애플리케이션의 사용자 경험(UX)은 단순한 텍스트 스트리밍을 넘어, 사용자의 의도와 데이터 구조에 맞추어 UI 컴포넌트 자체가 실시간으로 생성되고 진화하는 Generative UI의 시대로 접어들었습니다. 과거에는 LLM이 반환하는 JSON 데이터를 프론트엔드에서 일일이 파싱하여 조건문으로 분기 처리해야 했지만, 오늘날에는 모던 프레임워크와 AI... |
 | 2026-08-26 | [DSPy 프롬프트 프로그래밍: 수동 프롬프팅을 넘어 자율 최적화 컴파일러로 전환하기](_posts/2026-08-26-daily-ai-tech-update.md) | 2026년 복잡한 멀티스텝 LLM 애플리케이션을 개발할 때, 개발자가 프롬프트 문구를 한 줄씩 수작업으로 수정하고 튜닝(Prompt Hacking)하는 방식은 유지보수성과 재현성 측면에서 커다란 재앙이 되었습니다. 스탠포드 대학에서 개발한 DSPy(Declarative Self-improving Language Programs, pythonically... |
 | 2026-08-25 | [vLLM과 PagedAttention 최적화: 초고속 고효율 로컬 LLM 서빙 인프라 구축](_posts/2026-08-25-daily-ai-tech-update.md) | 2026년 기업 내 보안 규정과 비용 최적화를 위해 자체 인프라(On-Premise) 또는 프라이빗 클라우드에서 오픈소스 소형/대형 모델(Llama 3.3, DeepSeek, Qwen 2.5)을 직접 서빙하는 요구가 급증하고 있습니다. 이러한 로컬 LLM 서빙 환경에서 가장 큰 성능 병목은 KV 캐시(Key-Value Cache) 메모리 낭비와 처리량... |
