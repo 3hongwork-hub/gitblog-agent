@@ -9,54 +9,76 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [Direct Preference Optimization(DPO)과 실전 선호도 학습: 보상 모델 없는 사후 학습 파이프라인 구축](_posts/2026-09-09-daily-ai-tech-update.md)
-- **작성일**: `2026-09-09`
-- **카테고리**: `AI, MachineLearning` | **태그**: `Antigravity`
+### 📌 [GraphRAG와 커스텀 엔티티 추출 파이프라인: 비정형 대규모 문서에서 지식 그래프 실시간 구축하기](_posts/2026-09-10-daily-ai-tech-update.md)
+- **작성일**: `2026-09-10`
+- **카테고리**: `AI, Architecture` | **태그**: `Antigravity`
 
-> **핵심 요약**: 대규모 언어 모델(LLM)을 파인튜닝하는 전통적인 방식인 인간 피드백 기반 강화학습(RLHF, Reinforcement Learning from Human Feedback)은 강력하지만, 그 과정이 극도로 복잡하고 불안정하기로 악명이 높습니다. 프록시 보상 모델(Reward Model)을 먼저 학습시킨 뒤, PPO(Proximal Policy Opti...
+> **핵심 요약**: 대규모 언어 모델(LLM)을 활용한 전통적인 RAG(Retrieval-Augmented Generation) 시스템은 개별 문서 조각(Chunk)의 벡터 유사도 검색에 의존합니다. 이 방식은 키워드 매칭이나 국소적인 의미 포착에는 뛰어납니다. 하지만 "사내 전체 프로젝트 간의 복잡한 의존성 관계"나 "글로벌 공급망 전반에 걸친 리스크 전파"와 같이 방...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-대규모 언어 모델(LLM)을 파인튜닝하는 전통적인 방식인 인간 피드백 기반 강화학습(RLHF, Reinforcement Learning from Human Feedback)은 강력하지만, 그 과정이 극도로 복잡하고 불안정하기로 악명이 높습니다. 프록시 보상 모델(Reward Model)을 먼저 학습시킨 뒤, PPO(Proximal Policy Optimization) 알고리즘을 사용해 액터(Actor) 모델을 최적화하는 과정은 막대한 메모리와 연산 자원을 요구하며 하이퍼파라미터 튜닝 역시 까다롭습니다. 
+대규모 언어 모델(LLM)을 활용한 전통적인 RAG(Retrieval-Augmented Generation) 시스템은 개별 문서 조각(Chunk)의 벡터 유사도 검색에 의존합니다. 이 방식은 키워드 매칭이나 국소적인 의미 포착에는 뛰어납니다. 하지만 "사내 전체 프로젝트 간의 복잡한 의존성 관계"나 "글로벌 공급망 전반에 걸친 리스크 전파"와 같이 방대한 데이터에 산재한 복합적인 관계를 추론해야 하는 전역적(Global) 질의에는 한계가 명확합니다.
 
-이러한 RLHF의 구조적 복잡성과 불안정성을 혁신적으로 해결하기 위해 등장한 기법이 바로 **DPO(Direct Preference Optimization)**입니다. DPO는 별도의 보상 모델 학습이나 강화학습 루프 없이, 선호도 데이터셋만으로 언어 모델을 직접 최적화할 수 있는 수렴성 높은 사후 학습(Post-training) 방법론입니다. 이번 포스트에서는 DPO의 이론적 배경을 짚어보고, 실제 프로덕션 환경에서 PyTorch와 허깅페이스(Hugging Face) 생태계를 활용해 보상 모델 없는 사후 학습 파이프라인을 구축하는 실전 아키텍처를 살펴보겠습니다.
-
----
-
-### 1. 왜 DPO인가?: RLHF의 한계와 보상 함수 재정의
-
-전통적인 RLHF 파이프라인은 세 단계로 나뉩니다. 첫째, SFT(Supervised Fine-Tuning) 모델 학습. 둘째, 인간의 선호(어떤 응답이 더 좋은가)를 점수로 매기는 보상 모델 학습. 셋째, 보상 모델의 점수를 극대화하기 위한 PPO 강화학습. 이 과정에서 보상 모델과 정책(Policy) 모델, 참조(Reference) 모델, 크리틱(Critic) 모델까지 동시에 메모리에 올려야 하므로 GPU VRAM 소모가 폭발적으로 증가합니다.
-
-DPO는 수학적 트릭을 통해 이 복잡성을 제거합니다. 강화학습의 목적 함수를 언어 모델의 정책 자체에 대한 직접적인 손실 함수(Loss Function)로 재정의한 것입니다. 보상 함수 $r(x, y)$를 최적화 정책 $\pi_\theta(y|x)$와 참조 정책 $\pi_{ref}(y|x)$ 간의 로그 확률 비율로 표현할 수 있다는 점에 착안했습니다.
-
-$$ \mathcal{L}_{DPO}(\theta; \pi_{ref}) = -\mathbb{E}_{(x, y_w, y_l)} \left[ \log \sigma \left( \beta \log \frac{\pi_\theta(y_w|x)}{\pi_{ref}(y_w|x)} - \beta \log \frac{\pi_\theta(y_l|x)}{\pi_{ref}(y_l|x)} \right) \right] $$
-
-여기서 $y_w$는 선호되는 응답(Winner), $y_l$은 거부되는 응답(Loser)이며, $\beta$는 참조 정책으로부터의 이탈을 제어하는 파라미터입니다. 이 방식의 가장 큰 장점은 **강화학습 루프 없이 표준적인 교차 엔트로피(Cross-Entropy) 손실 함수를 계산하듯 모델을 가볍고 안정적으로 학습**시킬 수 있다는 점입니다.
+단순 청크 단위의 검색을 넘어, 문서 내의 개체(Entity)와 관계(Relationship)를 추출하여 유기적인 네트워크로 연결하는 **GraphRAG(Graph-based Retrieval-Augmented Generation)** 아키텍처가 차세대 엔터프라이즈 AI의 핵심으로 자리 잡고 있습니다. 이번 포스트에서는 LLM과 벡터 데이터베이스, 그리고 그래프 DB(Neo4j)를 결합하여 비정형 문서로부터 지식 그래프(Knowledge Graph)를 자동으로 구축하고, 이를 기반으로 고도화된 하이브리드 검색 파이프라인을 구현하는 실전 엔지니어링 방법을 심층적으로 살펴보겠습니다.
 
 ---
 
-### 2. DPO 파이프라인 실전 아키텍처 및 데이터셋 준비
+### 1. GraphRAG 아키텍처의 핵심 설계 철학
 
-성공적인 DPO 학습을 위해서는 프롬프트($x$), 선호 응답($y_w$), 비선호 응답($y_l$)으로 구성된 고품질의 페어(Pair) 데이터셋이 필수적입니다. 허깅페이스의 `trl`(Transformer Reinforcement Learning) 라이브러리는 이러한 DPO 학습을 표준화된 인터페이스로 지원합니다.
+전통적 RAG가 '숲을 보지 못하고 나무만 보는' 구조였다면, GraphRAG는 숲의 전체 생태계와 나무 간의 상관관계를 동시에 조망할 수 있게 해줍니다. 
 
-전체적인 파이프라인 아키텍처는 다음과 같이 설계합니다.
-1. **기반 모델 및 참조 모델 로드**: 메모리 효율성을 위해 QLoRA(Quantized LoRA)를 결합하여 베이스 모델을 4비트로 로드합니다.
-2. **데이터셋 토크나이징**: 프롬프트와 응답을 모델의 입력 포맷에 맞게 결합하고 정렬합니다.
-3. **DPOTrainer 설정**: $\beta$ 값과 학습률, 배치 크기를 정의하고 트레이너를 초기화합니다.
+GraphRAG의 전체 파이프라인은 크게 두 가지 축으로 구성됩니다. 첫째는 **인덱싱(Indexing) 단계**로, 비정형 텍스트를 입력받아 LLM을 통해 개체(사람, 조직, 기술, 이벤트 등)와 이들 간의 관계를 추출한 뒤 그래프 스토어에 적재합니다. 둘째는 **검색 및 생성(Retrieval & Generation) 단계**로, 사용자의 질의 유형에 따라 벡터 유사도 검색과 그래프 순회(Graph Traversal)를 결합하여 문맥을 극대화합니다.
 
-아래는 프로덕션 환경에서 사용할 수 있는 
+특히 전역적 질문(예: "우리 회사의 지난 3년간 기술 스택 전환이 비즈니스에 미친 종합적인 영향은?")에 대응하기 위해, 그래프 전체의 커뮤니티 구조를 요약하는 *Hierarchical Community Summarization* 기법이 필수적입니다. 데이터가 방대해질수록 토큰 효율성과 응답 정확도를 동시에 잡기 위한 비동기 파이프라인 설계가 요구됩니다.
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-09-09-daily-ai-tech-update.md))*
+```
+[비정형 문서] 
+     │
+     ▼
+[LLM 기반 개체/관계 추출 파이프라인] 
+     │
+     ├───────────────┬───────────────┐
+     ▼               ▼               ▼
+[Neo4j (그래프)]  [Chroma (벡터)]  [커뮤니티 요약 계층]
+     └───────────────┼───────────────┘
+                     ▼
+          [하이브리드 리트리버]
+                     │
+                     ▼
+            [최종 LLM 응답 생성]
+```
+
+---
+
+### 2. LLM 기반 엔티티 및 관계 추출 엔진 구현
+
+지식 그래프 구축의 품질은 원본 텍스트에서 얼마나 정확하고 일관성 있게 개체와 관계를 추출해 내느냐에 달려 있습니다. 프롬프트의 모호성을 줄이고 구조화된 출력(Structured Outputs)을 보장하기 위해, Pydantic과 LLM의 JSON 모드(또는 함수 호출)를 결합한 추출 엔진을 구현합니다.
+
+아래는 파이썬 환경에서 비정형 텍스트로부터 노드와 엣지를 정의하고 추출하는 핵심 파이프라인 코드입니다.
+
+```python
+import os
+from typing import List, Optional
+from pydantic import BaseModel, Field
+from openai import OpenAI
+
+# OpenAI 클라이언트 초기화 (2026년 기준 최신 표준 준수)
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+
+c
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-09-10-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 32개)
+## 📝 전체 발행 포스트 목록 (총 33개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-09-10 | [GraphRAG와 커스텀 엔티티 추출 파이프라인: 비정형 대규모 문서에서 지식 그래프 실시간 구축하기](_posts/2026-09-10-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 활용한 전통적인 RAG(Retrieval-Augmented Generation) 시스템은 개별 문서 조각(Chunk)의 벡터 유사도 검색에 의존합니다. 이 방식은 키워드 매칭이나 국소적인 의미 포착에는 뛰어납니다. 하지만 "사내 전체 프로젝트 간의 복잡한 의존성 관계"나 "글로벌 공급망 전반에 걸친 리스크 전파"와 같이 방... |
 | 2026-09-09 | [Direct Preference Optimization(DPO)과 실전 선호도 학습: 보상 모델 없는 사후 학습 파이프라인 구축](_posts/2026-09-09-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 파인튜닝하는 전통적인 방식인 인간 피드백 기반 강화학습(RLHF, Reinforcement Learning from Human Feedback)은 강력하지만, 그 과정이 극도로 복잡하고 불안정하기로 악명이 높습니다. 프록시 보상 모델(Reward Model)을 먼저 학습시킨 뒤, PPO(Proximal Policy Opti... |
 | 2026-09-07 | [Contextual Chunking과 Jina Re-ranker를 활용한 차세대 하이브리드 RAG 검색 파이프라인 실전 구축](_posts/2026-09-07-daily-ai-tech-update.md) | 현대의 대규모 언어 모델(LLM) 기반 애플리케이션에서 검색 증강 생성(RAG)은 여전히 핵심적인 아키텍처 요소입니다. 하지만 단순히 문서를 고정된 크기(Fixed-size)로 쪼개고 벡터 유사도 검색만 수행하는 전통적인 방식은 문서 전체의 맥락 유실, 키워드 검색의 한계, 그리고 상위 문서의 노이즈 비율 증가라는 치명적인 문제를 안고 있습니다. |
 | 2026-09-06 | [Apple MLX와 LoRA 파인튜닝: 애플 실리콘(M시리즈) 환경에서의 효율적인 온디바이스 소형 모델 적응형 학습 실전](_posts/2026-09-06-daily-ai-tech-update.md) | 현대 인공지능 엔지니어링 환경에서 대규모 언어 모델(LLM)의 서빙과 추론은 클라우드 인프라를 넘어 로컬 및 온디바이스 환경으로 빠르게 확장되고 있습니다. 특히 애플 실리콘(M1, M2, M3, M4 등) 맥(Mac) 제품군은 통합 메모리(Unified Memory Architecture) 구조를 채택하고 있어, 고성능 GPU 메모리 제약에서 비교적 ... |
