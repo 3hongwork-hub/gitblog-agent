@@ -9,72 +9,68 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [Next.js 15 Server Actions와 Vercel AI SDK를 활용한 제너레이티브 UI 및 스트리밍 아키텍처 실전 구축](_posts/2026-09-15-daily-ai-tech-update.md)
-- **작성일**: `2026-09-15`
-- **카테고리**: `Frontend, Architecture` | **태그**: `Antigravity`
+### 📌 [KEDA 기반 GPU 오토스케일링과 Kubernetes Ray Cluster를 활용한 엔터프라이즈 클라우드 네이티브 MLOps 아키텍처 실전 구축](_posts/2026-09-16-daily-ai-tech-update.md)
+- **작성일**: `2026-09-16`
+- **카테고리**: `AI, MLOps, Infrastructure` | **태그**: `Antigravity`
 
-> **핵심 요약**: 최근 웹 애플리케이션 개발 패러다임은 단순한 텍스트 기반의 챗봇 인터페이스를 넘어, 사용자의 의도에 따라 컴포넌트 자체가 동적으로 렌더링되는 제너레이티브 UI(Generative UI) 중심으로 진화하고 있습니다. 고정된 레이아웃 안에서 텍스트 응답만 보여주던 방식은 사용자의 복잡한 요구사항(예: 실시간 차트 생성, 동적 결제 모듈, 인터랙티브 폼)을...
+> **핵심 요약**: 현대적인 AI 엔지니어링 환경에서 대규모 LLM 추론, 대규모 배치 학습, 그리고 복잡한 분산 데이터 처리 파이프라인을 프로덕션 환경에 안정적으로 서빙하는 것은 수많은 인프라 엔지니어들의 핵심 과제입니다. 고비용의 GPU 자원을 항시 100% 가동 상태로 유지하는 것은 예산 낭비로 이어지며, 반대로 트래픽 급증 시 유연하게 확장되지 못하면 서비스 장애...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-최근 웹 애플리케이션 개발 패러다임은 단순한 텍스트 기반의 챗봇 인터페이스를 넘어, 사용자의 의도에 따라 컴포넌트 자체가 동적으로 렌더링되는 **제너레이티브 UI(Generative UI)** 중심으로 진화하고 있습니다. 고정된 레이아웃 안에서 텍스트 응답만 보여주던 방식은 사용자의 복잡한 요구사항(예: 실시간 차트 생성, 동적 결제 모듈, 인터랙티브 폼)을 충족하기에 한계가 명확합니다.
+현대적인 AI 엔지니어링 환경에서 대규모 LLM 추론, 대규모 배치 학습, 그리고 복잡한 분산 데이터 처리 파이프라인을 프로덕션 환경에 안정적으로 서빙하는 것은 수많은 인프라 엔지니어들의 핵심 과제입니다. 고비용의 GPU 자원을 항시 100% 가동 상태로 유지하는 것은 예산 낭비로 이어지며, 반대로 트래픽 급증 시 유연하게 확장되지 못하면 서비스 장애로 직결됩니다.
 
-본 포스트에서는 최신 **Next.js 15**의 강력한 아키텍처인 **Server Actions**와 **Vercel AI SDK**를 결합하여, 서버 측에서 안전하게 LLM과 통신하고 실시간으로 리액트 컴포넌트 스트리밍을 구현하는 프로덕션급 제너레이티브 UI 아키텍처의 설계 및 실전 구현 방법을 상세히 다룹니다.
-
----
-
-### 1. Next.js 15와 Vercel AI SDK 연동 아키텍처 이해
-
-전통적인 클라이언트 중심 AI 애플리케이션은 API 키 노출 위험, 대규모 페이로드 처리의 어려움, 그리고 컴포넌트 상태 동기화의 복잡성이라는 문제를 안고 있었습니다. Next.js 15의 **Server Actions**와 **React Server Components(RSC)** 생태계는 이러한 문제를 해결하는 이상적인 기반을 제공합니다.
-
-Vercel AI SDK v4 이상에서는 서버와 클라이언트 간의 데이터 흐름을 완벽하게 추상화한 `streamText` 및 `createStreamableUI` 등의 유틸리티를 제공합니다. 이를 통해 LLM의 토큰 스트리밍과 동시에 구조화된 리액트 컴포넌트(`JSX.Element`)를 클라이언트로 안전하게 푸시할 수 있습니다. 
-
-전체적인 데이터 흐름은 다음과 같습니다:
-1. **사용자 입력**: 클라이언트 컴포넌트에서 Next.js Server Action 호출.
-2. **서버 처리**: 서버 측에서 시스템 프롬프트와 도구(Tools) 정의를 바탕으로 LLM(`gpt-4o` 또는 `claude-3-5-sonnet`)에 요청 전송.
-3. **컴포넌트 스트리밍**: LLM이 특정 툴 호출(Tool Call)을 트리거하면, 서버는 해당 툴에 매핑된 리액트 컴포넌트를 즉시 렌더링하여 스트림 형태로 클라이언트에 전송.
-4. **실시간 UI 갱신**: 클라이언트는 수신된 컴포넌트를 지연 없이 화면에 마운트하여 제너레이티브 UI 완성.
+이번 포스트에서는 쿠버네티스(Kubernetes) 환경에서 **KEDA(Kubernetes Event-driven Autoscaling)**와 **Ray Cluster**를 결합하여, 실시간 대기열(Queue) 상태와 커스텀 메트릭을 기반으로 GPU 노드 및 워커(Worker)를 동적으로 스케일링하는 엔터프라이즈급 클라우드 네이티브 MLOps 아키텍처의 설계 방법과 실전 구현 코드를 상세히 다루겠습니다.
 
 ---
 
-### 2. 도구 정의 및 제너레이티브 UI 컴포넌트 설계
+### 1. 엔터프라이즈 MLOps를 위한 KEDA와 Ray Cluster 아키텍처 개요
 
-사용자의 입력에 따라 동적으로 렌더링될 컴포넌트와 이를 제어할 AI 툴 스키마를 정의해야 합니다. 여기서는 사용자가 재무 데이터 분석을 요청했을 때 인터랙티브 차트 컴포넌트를 동적으로 생성하는 시나리오를 구현합니다.
+기본적인 쿠버네티스 HPA(Horizontal Pod Autoscaler)는 CPU와 메모리 사용량만을 기준으로 파드를 확장하므로, 수십 개에서 수백 개의 잡(Job)이 비동기 큐에 쌓이는 AI 워크로드의 특성을 반영하기 어렵습니다. 이 문제를 해결하기 위해 **KEDA**를 도입합니다. KEDA는 Prometheus, Redis, AWS SQS 등 외부 이벤트 소스를 모니터링하다가 트리거 조건이 충족되면 쿠버네티스 워크로드의 레플리카(Replica) 수를 0에서 N으로 동적으로 조절해 주는 이벤트 기반 오토스케일러입니다.
 
-먼저, 클라이언트와 서버에서 공통으로 사용할 수 있는 동적 차트 컴포넌트와 이를 처리할 서버 액션 파일을 작성합니다.
+여기에 대규모 분산 계산을 담당하는 **Ray Cluster**를 결합하면, 헤드(Head) 노드와 동적으로 확장되는 워커(Worker) 노드들이 효율적으로 GPU 자원을 분할하여 사용할 수 있습니다. 아키텍처의 핵심 흐름은 다음과 같습니다:
 
-```typescript
-// app/actions.tsx
-'use server';
+1. **클라이언트 요청:** 사용자의 대규모 추론 또는 학습 요청이 API 게이트웨이를 거쳐 Redis 큐에 적재됩니다.
+2. **KEDA TriggerScaler 감지:** KEDA가 Redis 큐의 대기 중인 메시지 수(Queue Length)를 주기적으로 폴링합니다.
+3. **Ray Worker 스케일 아웃:** 큐에 임계값 이상의 작업이 쌓이면, KEDA는 Ray 클라이언트의 워커 파드 수 또는 쿠버네티스 클러스터 오토스케일러(Cluster Autoscaler)와 연동해 GPU 노드를 즉시 프로비저닝합니다.
+4. **분산 처리 실행:** Ray Cluster의 헤드 노드가 동적으로 합류한 워커 노드들에 작업을 균등하게 분산하여 처리합니다.
 
-import { streamUI } from 'ai/rsc';
-import { openai } from '@ai-sdk/openai';
-import { z } from 'zod';
-import { StockChartComponent } from '@/components/StockChartComponent';
-import { LoadingCard } from '@/components/LoadingCard';
+---
 
-export async function submitUserMessage(userInput: string) {
-  // 스트리밍 UI 객체 생성
-  const result = await streamUI({
-    model: openai('gpt-4o'),
-    system: '당신은 전문 금융 어시스턴트입니다. 사용자의 요청에 따라 적절한 UI 컴포넌트를 동적으로 생성하여 응답하세요.',
-    prompt: userInput,
-    // AI가 호출할 수 있는 도구(Tools) 정의
-    tools: {
-      showStockChart: {
-        desc
+### 2. KEDA ScaledObject를 활용한 Redis 큐 기반 GPU 워커 동적 확장 설정
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-09-15-daily-ai-tech-update.md))*
+실제 프로덕션 환경에서 Redis 큐에 쌓인 작업량에 따라 Ray 워커 파드를 동적으로 제어하기 위한 KEDA `ScaledObject` 매니페스트 설정을 살펴보겠습니다. 이 설정은 큐에 작업이 없을 때는 워커를 0으로 유지하여 GPU 비용을 절감하고, 작업이 들어오면 즉시 확장합니다.
+
+```yaml
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: ray-worker-autoscaler
+  namespace: mLOps-inference
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: ray-worker-deployment
+  minReplicaCount: 0 # 유휴 상태일 때 GPU 비용 절감을 위해 0으로 설정
+  maxReplicaCount: 10 # 트래픽 급증 시 최대 10대의 워커 파드로 확장
+  cooldownPeriod: 300 # 부하가 사라진 후 스케일 인(Scale-in)까지 대기하는 시간 (초)
+  pollingInterval: 15 # 큐 상태를 확인하는 주기 (초)
+  triggers:
+    - type: redis
+      metadata:
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-09-16-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 38개)
+## 📝 전체 발행 포스트 목록 (총 39개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-09-16 | [KEDA 기반 GPU 오토스케일링과 Kubernetes Ray Cluster를 활용한 엔터프라이즈 클라우드 네이티브 MLOps 아키텍처 실전 구축](_posts/2026-09-16-daily-ai-tech-update.md) | 현대적인 AI 엔지니어링 환경에서 대규모 LLM 추론, 대규모 배치 학습, 그리고 복잡한 분산 데이터 처리 파이프라인을 프로덕션 환경에 안정적으로 서빙하는 것은 수많은 인프라 엔지니어들의 핵심 과제입니다. 고비용의 GPU 자원을 항시 100% 가동 상태로 유지하는 것은 예산 낭비로 이어지며, 반대로 트래픽 급증 시 유연하게 확장되지 못하면 서비스 장애... |
 | 2026-09-15 | [Next.js 15 Server Actions와 Vercel AI SDK를 활용한 제너레이티브 UI 및 스트리밍 아키텍처 실전 구축](_posts/2026-09-15-daily-ai-tech-update.md) | 최근 웹 애플리케이션 개발 패러다임은 단순한 텍스트 기반의 챗봇 인터페이스를 넘어, 사용자의 의도에 따라 컴포넌트 자체가 동적으로 렌더링되는 제너레이티브 UI(Generative UI) 중심으로 진화하고 있습니다. 고정된 레이아웃 안에서 텍스트 응답만 보여주던 방식은 사용자의 복잡한 요구사항(예: 실시간 차트 생성, 동적 결제 모듈, 인터랙티브 폼)을... |
 | 2026-09-14 | [DSPy와 자동 Teleprompter 최적화: 선언적 프롬프트 프로그래밍을 통한 프로덕션급 LLM 파이프라인 구축](_posts/2026-09-14-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 활용한 소프트웨어를 개발할 때 가장 번거롭고 반복적인 작업 중 하나는 바로 프롬프트 엔지니어링입니다. 시스템 프롬프트를 미세 조정하고, Few-shot 예시를 수동으로 골라 넣으며, 모델의 버전이 바뀔 때마다 프롬프트를 처음부터 다시 테스트하는 과정은 엔지니어링 관점에서 매우 비효율적이고 확장성이 떨어집니다. |
 | 2026-09-13 | [vLLM과 PagedAttention 최적화: 대규모 클라우드 환경에서의 초고속 분산 LLM 추론 아키텍처 실전 구축](_posts/2026-09-13-daily-ai-tech-update.md) | 현대 생성형 AI 서비스가 프로덕션 환경으로 완전히 전환되면서, 대규모 언어 모델(LLM) 서빙 인프라의 효율성은 비즈니스의 성패를 가르는 핵심 지표가 되었습니다. 특히 수천 명의 사용자가 동시에 멀티턴 대화를 수행하는 환경에서, 기존의 메모리 관리 방식은 GPU VRAM의 심각한 파편화(Fragmentation)와 KV 캐시(Key-Value Cac... |
