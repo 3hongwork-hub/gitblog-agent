@@ -9,58 +9,64 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [DuckDB와 Apache Arrow 기반 초고속 Text-to-SQL 분석 에이전트: 인메모리 OLAP과 셀프 힐링 쿼리 파이프라인 구축](_posts/2026-10-15-daily-ai-tech-update.md)
-- **작성일**: `2026-10-15`
-- **카테고리**: `DataEngineering, AI` | **태그**: `Antigravity`
+### 📌 [SGLang과 RadixAttention 기반 고성능 LLM 추론 엔진 최적화: 프리픽스 캐싱(Prefix Caching)을 통한 토큰 처리량 극대화 실전 가이드](_posts/2026-10-16-daily-ai-tech-update.md)
+- **작성일**: `2026-10-16`
+- **카테고리**: `AI, Inference Infrastructure` | **태그**: `Antigravity`
 
-> **핵심 요약**: 자연어를 SQL로 변환하여 데이터를 조회하는 Text-to-SQL 기술은 엔터프라이즈 환경에서 비개발 직군과 데이터 분석가들의 생산성을 혁신할 핵심 솔루션으로 꼽혀왔습니다. 그러나 지금까지의 상용 Text-to-SQL 시스템은 심각한 운영상 병목을 겪어왔습니다. Snowflake, BigQuery 등 고비용 클라우드 데이터 웨어하우스(DW)에 검증되지...
+> **핵심 요약**: 대규모 언어 모델(LLM)을 프로덕션 환경에 배포하고 서비스하는 엔지니어들이 가장 마주하기 곤란한 병목 현상 중 하나는 바로 방대한 콘텍스트와 반복되는 시스템 프롬프트(System Prompt) 처리로 인한 연산 중복 문제입니다. 멀티턴 대화, 복잡한 에이전트 프롬프트, 그리고 공통 지식 베이스가 주입되는 RAG(Retrieval-Augmented G...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-자연어를 SQL로 변환하여 데이터를 조회하는 Text-to-SQL 기술은 엔터프라이즈 환경에서 비개발 직군과 데이터 분석가들의 생산성을 혁신할 핵심 솔루션으로 꼽혀왔습니다. 그러나 지금까지의 상용 Text-to-SQL 시스템은 심각한 운영상 병목을 겪어왔습니다. Snowflake, BigQuery 등 고비용 클라우드 데이터 웨어하우스(DW)에 검증되지 않은 LLM 생성 쿼리를 직접 전송하여 불필요한 컴퓨팅 비용과 레이턴시가 발생했고, 잘못된 테이블 조인이나 구문 에러가 발생했을 때 즉각적인 피드백 루프를 형성하기 어려웠습니다.
+대규모 언어 모델(LLM)을 프로덕션 환경에 배포하고 서비스하는 엔지니어들이 가장 마주하기 곤란한 병목 현상 중 하나는 바로 방대한 콘텍스트와 반복되는 시스템 프롬프트(System Prompt) 처리로 인한 연산 중복 문제입니다. 멀티턴 대화, 복잡한 에이전트 프롬프트, 그리고 공통 지식 베이스가 주입되는 RAG(Retrieval-Augmented Generation) 파이프라인에서는 매 요청마다 수천 개의 토큰에 달하는 동일한 프롬프트 프리픽스가 반복적으로 파싱되고 쿼리됩니다.
 
-2026년 현재, 이러한 한계를 극복하기 위해 **DuckDB의 벡터화 임베디드 OLAP 엔진**과 **Apache Arrow의 무복사(Zero-Copy) 인메모리 전송 표준**을 결합한 경량 고성능 분석 에이전트 아키텍처가 급부상하고 있습니다. 이번 포스트에서는 LLM이 생성한 쿼리를 로컬 샌드박스 환경에서 마이크로초 단위로 사전 검증하고, 문법 및 런타임 에러를 스스로 복구(Self-Healing)하며 최종 결과를 시각화 레이어로 직렬화하는 차세대 데이터 엔지니어링 에이전트 파이프라인을 다룹니다.
+전통적인 추론 서버 아키텍처는 매 요청을 독립적인 시퀀스로 취급하여 이미 계산된 어텐션 키-밸류(KV) 캐시를 재활용하지 못하고 중복 연산을 수행했습니다. 이러한 비효율성을 극복하기 위해 등장한 혁신적인 기술이 바로 **SGLang**과 핵심 알고리즘인 **RadixAttention**을 활용한 동적 프리픽스 캐싱(Prefix Caching)입니다. 이번 포스트에서는 SGLang 엔진의 내부 아키텍처를 분석하고, RadixAttention을 통해 KV 캐시를 효율적으로 관리하여 LLM 추론 처리량을 극대화하는 실전 구축 방법을 상세히 다루어 보겠습니다.
 
 ---
 
-### 1. 임베디드 OLAP과 Apache Arrow: 제로 카피 인메모리 샌드박스
+### 1. SGLang 아키텍처와 RadixAttention의 핵심 원리
 
-전통적인 RDBMS 기반 접근 방식과 달리, DuckDB는 별도의 데몬 프로세스 없이 애플리케이션 메모리 공간 내에 상주하는 초경량 컬럼형(Columnar) 데이터베이스입니다. Parquet, Iceberg, CSV 파일 등 다양한 데이터 소스를 외부 엔진 기동 없이 직접 고속 스캔할 수 있으며, 최신 SIMD 벡터화 실행 엔진을 통해 수천만 건의 레코드를 수 밀리초 만에 집계합니다.
+SGLang은 대규모 언어 모델을 위한 고속 실행 프레임워크이자 구조화된 생성 언어로, 프롬프트 실행 속도를 극단적으로 끌어올리기 위해 설계되었습니다. 기존 vLLM의 PagedAttention이 메모리 단편화를 방지하고 KV 캐시를 페이지 단위로 관리하는 데 초점을 맞추었다면, SGLang의 **RadixAttention**은 이를 한 단계 더 발전시켜 **메모리 내에 프리픽스 트리를 구축**합니다.
 
-여기에 **Apache Arrow** 포맷이 결합되면서 데이터 에이전트의 아키텍처적 효율성은 극대화됩니다. DuckDB에서 실행된 쿼리 결과는 메모리 복사(Memory Copy)나 불필요한 역직렬화(Deserialization) 과정 없이 곧바로 Arrow RecordBatch 형태로 전달됩니다.
+RadixAttention의 작동 방식을 이해하려면 파일 시스템의 트리 구조를 떠올리면 쉽습니다. 서버로 들어오는 프롬프트들은 공통된 접두사(예: 시스템 프롬프트, 페르소나 설정, 공통 문서 컨텍스트)를 공유합니다. SGLang은 이 토큰 시퀀스를 라딕스 트리(Radix Tree) 형태로 메모리에 인덱싱하여, 새로운 요청이 들어왔을 때 이미 트리에 존재하는 프리픽스 구간과 일치하는지 실시간으로 탐색합니다. 
 
-```
-+-------------------------------------------------------+
-|  User Natural Language Query                          |
-+---------------------------+---------------------------+
-                            |
-                            v
-+-------------------------------------------------------+
-|  LLM (Schema-Linked Prompt with Metadata Injection)  |
-+---------------------------+---------------------------+
-                            | SQL Query Generation
-                            v
-+-------------------------------------------------------+
-|  Sandboxed Local DuckDB Runtime                       |
-|  - In-Memory Catalog Validation                       |
-|  - Explain Plan & Cost Analysis                       |
-|  - Execution on Local Parquet / Arrow Tables          |
-+-------------+---------------------------+-------------+
-              | (Syntax/Runtime Error)    | (Success)
-              v                           v
-+-----------------------------+  +-----
+일치하는 구간(Hit)이 발견되면, 해당 토큰들에 대한 프리필(Prefill) 단계를 통째로 건너뛰고 기존에 계산되어 있던 KV 캐시를 즉시 재사용합니다. 이로 인해 첫 토큰 생성 시간(Time to First Token, TTFT)이 획기적으로 단축되며, GPU 연산 자원을 오롯이 새로운 디코딩(Decoding) 연산에 집중시킬 수 있게 됩니다.
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-15-daily-ai-tech-update.md))*
+---
+
+### 2. SGLang 서버 구축 및 프리픽스 캐싱 활성화 실전
+
+프로덕션 환경에서 SGLang을 배포하고 프리픽스 캐싱을 활성화하는 것은 매우 직관적입니다. SGLang은 기본적으로 RadixAttention을 활성화된 상태로 제공하지만, 대규모 모델을 다룰 때 메모리 할당 정책과 청크 프리필(Chunked Prefill) 설정을 최적화해야 비로소 진정한 성능을 발휘할 수 있습니다.
+
+아래는 Docker와 Python 환경을 기반으로 SGLang 서버를 띄우고, 고성능 추론 API를 호출하는 실전 설정 예시입니다.
+
+```python
+# 파일명: sglang_server_deploy.py
+# 설명: SGLang 엔진을 프로그래밍 방식으로 초기화하고 RadixAttention 기반 추론을 수행하는 실전 스크립트
+
+import sglang as sgl
+import requests
+import json
+
+def run_sglang_benchmark():
+    # 1. SGLang 엔진 초기화 (로컬 또는 분산 환경)
+    # --mem-fraction-static 설정으로 KV 캐시에 할당할 GPU 메모리 비율을 조절합니다.
+    # RadixAttention은 기본 활성화되어 있으며, 별도의 플래그 없이도 트리 구조 캐싱이 동작합니다.
+    print("SGLang 엔진 초기화 중...")
+    
+    # 실제 프로덕션에서는 CLI
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-16-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 60개)
+## 📝 전체 발행 포스트 목록 (총 61개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-10-16 | [SGLang과 RadixAttention 기반 고성능 LLM 추론 엔진 최적화: 프리픽스 캐싱(Prefix Caching)을 통한 토큰 처리량 극대화 실전 가이드](_posts/2026-10-16-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 프로덕션 환경에 배포하고 서비스하는 엔지니어들이 가장 마주하기 곤란한 병목 현상 중 하나는 바로 방대한 콘텍스트와 반복되는 시스템 프롬프트(System Prompt) 처리로 인한 연산 중복 문제입니다. 멀티턴 대화, 복잡한 에이전트 프롬프트, 그리고 공통 지식 베이스가 주입되는 RAG(Retrieval-Augmented G... |
 | 2026-10-15 | [DuckDB와 Apache Arrow 기반 초고속 Text-to-SQL 분석 에이전트: 인메모리 OLAP과 셀프 힐링 쿼리 파이프라인 구축](_posts/2026-10-15-daily-ai-tech-update.md) | 자연어를 SQL로 변환하여 데이터를 조회하는 Text-to-SQL 기술은 엔터프라이즈 환경에서 비개발 직군과 데이터 분석가들의 생산성을 혁신할 핵심 솔루션으로 꼽혀왔습니다. 그러나 지금까지의 상용 Text-to-SQL 시스템은 심각한 운영상 병목을 겪어왔습니다. Snowflake, BigQuery 등 고비용 클라우드 데이터 웨어하우스(DW)에 검증되지... |
 | 2026-10-14 | [LangGraph 상태 기반 멀티에이전트 오케스트레이션: 동적 서브그래프와 휴먼-인-더-루프(Human-in-the-loop) 아키텍처 실전 구축](_posts/2026-10-14-daily-ai-tech-update.md) | 현대 엔터프라이즈 AI 시스템은 단일 LLM 프롬프트 호출의 한계를 넘어, 복잡한 비즈니스 로직을 스스로 분해하고 협업하는 멀티에이전트(Multi-Agent) 시스템으로 진화하고 있습니다. 단순한 순차적 파이프라인을 넘어 조건에 따라 동적으로 에이전트 간 제어권을 위임하고, 중요한 의사결정 구간에서 사람의 개입(Human-in-the-loop)을 안전... |
 | 2026-10-13 | [Arize Phoenix와 OpenTelemetry 분산 트레이싱을 활용한 프로덕션급 LLM 옵저버빌리티 및 실시간 환각 모니터링 아키텍처](_posts/2026-10-13-daily-ai-tech-update.md) | 대규모 언어 모델(LLM) 기반 애플리케이션이 프로덕션 환경에 성공적으로 안착하기 위해서는 전통적인 소프트웨어 모니터링을 뛰어넘는 정교한 옵저버빌리티(Observability) 체계가 필수적입니다. 기존의 APM(Application Performance Monitoring) 툴만으로는 LLM 내부의 토큰 소비량, 비정형 프롬프트의 흐름, 지연 시간(... |
