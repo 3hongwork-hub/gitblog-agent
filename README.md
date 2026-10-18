@@ -9,52 +9,66 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [WebGPU와 Transformers.js v3 기반 온디바이스 SLM 인프라: 서버리스 제로-네트워크 로컬 추론 엔진 구축](_posts/2026-10-17-daily-ai-tech-update.md)
-- **작성일**: `2026-10-17`
-- **카테고리**: `AI, WebEngineering` | **태그**: `Antigravity`
+### 📌 [Apple MLX와 LoRA 파인튜닝을 활용한 맥북(Apple Silicon) 온디바이스 커스텀 LLM 학습 파이프라인 실전 구축](_posts/2026-10-18-daily-ai-tech-update.md)
+- **작성일**: `2026-10-18`
+- **카테고리**: `AI, Apple Silicon` | **태그**: `Antigravity`
 
-> **핵심 요약**: 대규모 클라우드 GPU 클러스터 기반 LLM 서비스는 막대한 인프라 비용, 네트워크 왕복 시간(RTT)으로 인한 지연, 그리고 데이터 프라이버시 침해라는 치명적인 단점을 항상 수반합니다. 특히 2026년 현재, 매개변수 1B~3B 규모의 고성능 소형 언어 모델(SLM, Small Language Model)들이 상위 모델에 근접하는 지능 지수를 입증하...
+> **핵심 요약**: 대규모 언어 모델(LLM)의 파인튜닝은 전통적으로 고가의 고성능 엔터프라이즈 GPU 클러스터와 수많은 VRAM을 요구하는 무거운 작업으로 여겨졌습니다. 하지만 Apple Silicon(M1/M2/M3/M4) 프로세서의 통합 메모리(Unified Memory) 구조와 애플이 직접 개발한 머신러닝 프레임워크인 MLX의 등장으로 개발 환경은 완전히 새로운 ...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-대규모 클라우드 GPU 클러스터 기반 LLM 서비스는 막대한 인프라 비용, 네트워크 왕복 시간(RTT)으로 인한 지연, 그리고 데이터 프라이버시 침해라는 치명적인 단점을 항상 수반합니다. 특히 2026년 현재, 매개변수 1B~3B 규모의 고성능 소형 언어 모델(SLM, Small Language Model)들이 상위 모델에 근접하는 지능 지수를 입증하면서, 브라우저 클라이언트 내부에서 모델을 온전히 구동하는 **온디바이스(On-device) AI 아키텍처**가 실현 가능한 프로덕션 대안으로 완전히 자리잡았습니다.
+대규모 언어 모델(LLM)의 파인튜닝은 전통적으로 고가의 고성능 엔터프라이즈 GPU 클러스터와 수많은 VRAM을 요구하는 무거운 작업으로 여겨졌습니다. 하지만 Apple Silicon(M1/M2/M3/M4) 프로세서의 통합 메모리(Unified Memory) 구조와 애플이 직접 개발한 머신러닝 프레임워크인 **MLX**의 등장으로 개발 환경은 완전히 새로운 국면을 맞이하고 있습니다. 맥북 프로 한 대만 있으면 클라우드 비용을 들이지 않고도, 로컬 환경에서 안전하고 빠르게 최신 소형 언어 모델(SLM)을 커스텀 도메인에 맞게 파인튜닝할 수 있는 시대가 열린 것입니다.
 
-브라우저는 더 이상 단순한 뷰어가 아닙니다. W3C 표준으로 안착한 **WebGPU** 인터페이스와 양자화 포맷(AWQ, ONNX Runtime Web, INT4/FP16)의 결합을 통해, 클라이언트 기기의 네이티브 GPU(NVIDIA, Apple Silicon M-시리즈, Intel Arc, Qualcomm Snapdragon X) 파워를 브라우저 런타임에서 직접 가속할 수 있게 되었습니다. 
-
-본 포스트에서는 최신 **Transformers.js v3**와 WebGPU 백엔드를 활용하여, 민감한 개인정보를 서버로 단 1바이트도 전송하지 않고 브라우저 메모리 내에서 4-bit 양자화 모델을 캐싱 및 구동하는 제로-레이턴시 엣지 추론 파이프라인 실전 구현법을 다룹니다.
+이번 포스트에서는 Apple MLX 프레임워크와 LoRA(Low-Rank Adaptation) 기법을 결합하여, Apple Silicon 환경에서 효율적으로 대규모 언어 모델을 커스텀 학습시키는 파이프라인 구축 방법을 실전 코드를 통해 상세히 알아보겠습니다.
 
 ---
 
-### 1. WebGPU와 브라우저 기반 SLM 실행의 핵심 구조
+### 1. Apple MLX 아키텍처와 통합 메모리 구조의 이해
 
-WebGPU는 기존 WebGL의 높은 드라이버 오버헤드와 비효율적인 셰이더 바인딩 한계를 극복하기 위해 설계된 저수준 그래픽 및 연산 API(Vulkan, Metal, DirectX 12 기반)입니다. 브라우저 내부에서 범용 컴퓨팅(GPGPU)을 수행할 수 있도록 컴퓨트 셰이더(Compute Shader)와 워크그룹(Workgroup) 단위 병렬 처리를 직접 제어합니다.
+Apple MLX는 Apple Silicon의 잠재력을 극한으로 끌어내기 위해 설계된 NumPy 라이크(NumPy-like) 머신러닝 프레임워크입니다. PyTorch나 JAX와 유사한 인터페이스를 제공하지만, Apple Silicon(CPU, GPU, Neural Engine)의 아키텍처적 특성을 완벽하게 타겟팅하여 설계되었습니다.
 
-온디바이스 추론에서 핵심적인 도전 과제는 다음 세 가지입니다:
-
-1. **대용량 가중치 다운로드 및 메모리 상주**: 3B 모델이라도 FP16 상태에서는 6GB 이상의 VRAM을 요구하므로 모바일 및 저전력 PC 환경에서는 OOM(Out of Memory)이 발생합니다. 이를 위해 **4-bit/8-bit 양자화(INT4 AWQ/Q4F16) ONNX 가중치**를 활용해 1.5GB 내외로 줄여야 합니다.
-2. **셰이더 컴파일 지연(Shader Pre-compilation)**: 최초 브라우저 로딩 시 연산 셰이더 파이프라인 생성에 멈춤 현상(Jank)이 발생하지 않도록 비동기 파이프라인 캐시를 구축해야 합니다.
-3. **메인 UI 스레드 블로킹 방지**: 텐서 연산 및 텍스트 토크나이징 과정이 브라우저의 렌더링 프레임(60/120fps)을 저해하지 않도록 **Dedicated Web Worker** 계층으로 런타임을 완전히 분리해야 합니다.
+전통적인 클라우드 GPU 환경에서는 호스트 메모리(RAM)와 디바이스 메모리(VRAM) 사이에 데이터를 지속해서 복사해야 하는 병목 현상이 발생합니다. 반면, Apple Silicon은 **통합 메모리 아키텍처(Unified Memory Architecture, UMA)**를 채택하고 있어 CPU와 GPU가 동일한 물리적 메모리 풀을 공유합니다. 
 
 ```
-+-----------------------------------------------------------------------------------------+
-|                                    Client Browser                                       |
-|                                                                                         |
-|  [Main Thread]                                      [Web Worker Thread]                 |
-|  +--------------------+                             +--------------------------------+  |
-|  | React/Vue UI       |  postMessage(Prompt)        | Transformers.js v3 Core        |  |
-|  | - Virtual List     | ----------------
+[Traditional GPU Architecture]          [Apple Silicon MLX Architecture]
++--------------+     PCIe     +-------+    +------------------------------------+
+|  Host RAM    | <----------> | VRAM  |    |            Unified RAM             |
++--------------+              +-------+    |  (CPU & GPU Shared Zero-Copy Pool) |
+ (Data Copy Overhead)                      +------------------------------------+
+                                            (Zero-Copy & Fast Tensor Operations)
+```
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-17-daily-ai-tech-update.md))*
+이 구조 덕분에 MLX는 데이터 복사 비용(Zero-copy)을 없애고, 맥북의 막대한 시스템 메모리(예: 64GB 또는 128GB)를 온전히 모델 학습용 VRAM처럼 활용할 수 있습니다. 7B(70억 파라미터) 또는 14B급의 모델도 양자화 기법과 결합하면 메모리 부족 현상 없이 원활하게 파인튜닝을 수행할 수 있습니다.
+
+---
+
+### 2. MLX 대화형 데이터셋 준비 및 데이터 파이프라인 구축
+
+MLX를 활용한 파인튜닝을 시작하려면 모델이 학습할 수 있는 형태의 JSON 또는 JSONL 포맷 데이터셋을 준비해야 합니다. 여기서는 고객 지원 챗봇 도메인에 특화된 프롬프트-응답 쌍 구조의 데이터셋을 정의하고, MLX 학습기(Trainer)가 요구하는 형식으로 변환하는 파이프라인을 구축합니다.
+
+먼저 터미널에서 필요한 MLX 관련 패키지를 설치합니다.
+
+```bash
+pip install mlx mlx-lm
+```
+
+다음은 학습 데이터셋인 `data/train.jsonl` 파일의 예시 구조입니다.
+
+```json
+{"text": "Human: 사내 복지 포인트는 어디서 신청하나요? Assistant: 사내 복지 포인트는 인트라넷 '복지몰' 메뉴에서 매월 1일부터 10일 사이에 신청하
+
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-18-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 62개)
+## 📝 전체 발행 포스트 목록 (총 63개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-10-18 | [Apple MLX와 LoRA 파인튜닝을 활용한 맥북(Apple Silicon) 온디바이스 커스텀 LLM 학습 파이프라인 실전 구축](_posts/2026-10-18-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)의 파인튜닝은 전통적으로 고가의 고성능 엔터프라이즈 GPU 클러스터와 수많은 VRAM을 요구하는 무거운 작업으로 여겨졌습니다. 하지만 Apple Silicon(M1/M2/M3/M4) 프로세서의 통합 메모리(Unified Memory) 구조와 애플이 직접 개발한 머신러닝 프레임워크인 MLX의 등장으로 개발 환경은 완전히 새로운 ... |
 | 2026-10-17 | [WebGPU와 Transformers.js v3 기반 온디바이스 SLM 인프라: 서버리스 제로-네트워크 로컬 추론 엔진 구축](_posts/2026-10-17-daily-ai-tech-update.md) | 대규모 클라우드 GPU 클러스터 기반 LLM 서비스는 막대한 인프라 비용, 네트워크 왕복 시간(RTT)으로 인한 지연, 그리고 데이터 프라이버시 침해라는 치명적인 단점을 항상 수반합니다. 특히 2026년 현재, 매개변수 1B~3B 규모의 고성능 소형 언어 모델(SLM, Small Language Model)들이 상위 모델에 근접하는 지능 지수를 입증하... |
 | 2026-10-16 | [SGLang과 RadixAttention 기반 고성능 LLM 추론 엔진 최적화: 프리픽스 캐싱(Prefix Caching)을 통한 토큰 처리량 극대화 실전 가이드](_posts/2026-10-16-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 프로덕션 환경에 배포하고 서비스하는 엔지니어들이 가장 마주하기 곤란한 병목 현상 중 하나는 바로 방대한 콘텍스트와 반복되는 시스템 프롬프트(System Prompt) 처리로 인한 연산 중복 문제입니다. 멀티턴 대화, 복잡한 에이전트 프롬프트, 그리고 공통 지식 베이스가 주입되는 RAG(Retrieval-Augmented G... |
 | 2026-10-15 | [DuckDB와 Apache Arrow 기반 초고속 Text-to-SQL 분석 에이전트: 인메모리 OLAP과 셀프 힐링 쿼리 파이프라인 구축](_posts/2026-10-15-daily-ai-tech-update.md) | 자연어를 SQL로 변환하여 데이터를 조회하는 Text-to-SQL 기술은 엔터프라이즈 환경에서 비개발 직군과 데이터 분석가들의 생산성을 혁신할 핵심 솔루션으로 꼽혀왔습니다. 그러나 지금까지의 상용 Text-to-SQL 시스템은 심각한 운영상 병목을 겪어왔습니다. Snowflake, BigQuery 등 고비용 클라우드 데이터 웨어하우스(DW)에 검증되지... |
