@@ -9,84 +9,70 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [GraphRAG와 Contextual Chunking을 결합한 차세대 엔터프라이즈 RAG 아키텍처: 의미론적 지식 그래프와 하이브리드 검색 구현 실전 가이드](_posts/2026-10-21-daily-ai-tech-update.md)
-- **작성일**: `2026-10-21`
-- **카테고리**: `AI, RAG` | **태그**: `Antigravity`
+### 📌 [SWE-bench 기반 에이전트 평가 자동화 파이프라인: LLM-as-a-Judge와 샌드박스 격리 환경을 활용한 프로덕션급 벤치마크 구축 실전 가이드](_posts/2026-10-22-daily-ai-tech-update.md)
+- **작성일**: `2026-10-22`
+- **카테고리**: `AI, Engineering` | **태그**: `Antigravity`
 
-> **핵심 요약**: 현대 엔터프라이즈 환경에서 레거시 RAG(Retrieval-Augmented Generation) 시스템은 여전히 강력한 도구이지만, 복잡하게 얽힌 문서 간의 관계를 파악하고 전역적(Global)인 질문에 답변하는 과정에서 구조적인 한계에 부딪히고 있습니다. 단순한 의미 기반 벡터 검색(Vector Similarity Search)은 문서의 파편화된 ...
+> **핵심 요약**: 현대 소프트웨어 엔지니어링 생태계에서 LLM 기반 코딩 에이전트는 단순한 코드 자동완성 도구를 넘어 실제 복잡한 코드베이스의 버그를 수정하고 기능 개발을 수행하는 자율 시스템으로 진화하고 있습니다. 그러나 챗봇 형태의 정성적인 평가만으로는 에이전트가 실제 프로덕션 환경의 복잡한 소프트웨어 공학 문제를 해결할 수 있는지 객관적으로 검증하기 어렵습니다.
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-현대 엔터프라이즈 환경에서 레거시 RAG(Retrieval-Augmented Generation) 시스템은 여전히 강력한 도구이지만, 복잡하게 얽힌 문서 간의 관계를 파악하고 전역적(Global)인 질문에 답변하는 과정에서 구조적인 한계에 부딪히고 있습니다. 단순한 의미 기반 벡터 검색(Vector Similarity Search)은 문서의 파편화된 조각(Chunk)만을 반환하기 때문에, 대규모 문서 집합에 걸쳐 숨겨진 핵심 맥락이나 엔티티 간의 복잡한 상관관계를 유추하는 데 실패하기 쉽습니다.
+현대 소프트웨어 엔지니어링 생태계에서 LLM 기반 코딩 에이전트는 단순한 코드 자동완성 도구를 넘어 실제 복잡한 코드베이스의 버그를 수정하고 기능 개발을 수행하는 자율 시스템으로 진화하고 있습니다. 그러나 챗봇 형태의 정성적인 평가만으로는 에이전트가 실제 프로덕션 환경의 복잡한 소프트웨어 공학 문제를 해결할 수 있는지 객관적으로 검증하기 어렵습니다. 
 
-본 포스트에서는 이러한 한계를 극복하기 위해 최신 **GraphRAG(지식 그래프 기반 RAG)** 아키텍처와 **Contextual Chunking(문맥 인식 청킹)** 기술을 결합하여, 엔터프라이즈 문서의 구조적 깊이와 정밀도를 동시에 확보하는 차세대 하이브리드 RAG 파이프라인 구축 방법을 실전 코드를 통해 상세히 알아봅니다.
+실제 GitHub 이슈를 해결하는 능력을 정량적으로 평가하기 위해 등장한 **SWE-bench** 표준은 에이전트 엔지니어링의 핵심 벤치마크로 자리 잡았습니다. 이번 포스트에서는 컨테이너 기반 샌드박스 격리 환경과 LLM-as-a-Judge 평가 메커니즘을 결합하여, 우리 팀만의 커스텀 코딩 에이전트 성능을 자동으로 측정하고 CI/CD 파이프라인에 통합할 수 있는 프로덕션급 에이전트 평가 자동화 파이프라인의 구축 실전 가이드를 공유합니다.
 
 ---
 
-### 1. Contextual Chunking으로 문서 파편화 문제 해결하기
+### 1. SWE-bench 아키텍처와 에이전트 평가 파이프라인 개요
 
-전통적인 RAG 파이프라인의 가장 큰 적은 '잘못된 청킹(Chunking)'입니다. 문서를 고정된 크기(Fixed-size)로 기계적으로 분할하면, 문맥이 끊어지거나 중요한 선행 정보가 유실되어 임베딩의 품질이 심각하게 저하됩니다. 
+전통적인 소프트웨어 테스트와 달리, 자율 코딩 에이전트 평가는 대상 모델이 직접 Git 레포지토리를 클론하고, 문제 정의(Issue Description)를 분석한 뒤, 코드를 수정하고 단위 테스트(Unit Test)를 통과시켜야 하는 전 과정을 포함합니다. 이 과정에서 악성 코드 실행이나 시스템 손상을 방지하기 위해 완전한 격리 환경이 필수적입니다.
 
-이를 해결하기 위한 **Contextual Chunking**은 대형 언어 모델(LLM)을 활용하여 각 청크가 속한 전체 문서의 요약 및 전역적 맥락(Global Context)을 해당 청크의 헤더나 메타데이터에 동적으로 주입하는 기법입니다.
+우리가 구축할 평가 파이프라인은 다음과 같은 4단계 아키텍처로 구성됩니다.
+1. **문제 로더(Issue Loader):** SWE-bench 데이터셋 또는 사내 커스텀 벤치마크셋에서 타겟 레포지토리와 이슈, 그리고 패치 전후의 테스트 케이스를 로드합니다.
+2. **격리된 샌드박스 실행기(Sandbox Executor):** Docker 컨테이너를 동적으로 생성하여 레포지토리의 특정 커밋 상태를 복원하고, 대상 에이전트(예: LangGraph 기반 코딩 에이전트)에 이슈를 주입합니다.
+3. **패치 추출 및 적용(Patch Application):** 에이전트가 수행한 파일 변경 사항을 Git Diff 형식으로 추출하고, 테스트 베드 환경에 적용합니다.
+4. **검증 및 LLM-as-a-Judge 분석(Evaluation Engine):** 유닛 테스트 실행 결과(Pass/Fail)와 더불어, LLM-as-a-Judge를 통해 코드의 가독성, 아키텍처 일관성, 잠재적 부작용을 다차원적으로 채점합니다.
+
+---
+
+### 2. 안전한 격리 환경을 위한 Docker 샌드박스 실행기 구현
+
+에이전트가 코드를 직접 빌드하고 실행하는 과정에서 시스템 자원 고갈이나 무한 루프 등의 위험이 존재합니다. Python의 `docker` SDK를 활용하여 네트워크가 차단되거나 자원이 엄격히 제한된 안전한 격리 컨테이너 실행기를 구현해 보겠습니다.
+
+아래는 에이전트의 작업 공간을 컨테이너 내부에 구축하고 코드를 실행하는 핵심 파이썬 스크립트입니다.
 
 ```python
+import docker
 import os
-from typing import List
-from openai import OpenAI
+from typing import Dict, Any
 
-client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+class SandboxExecutor:
+    def __init__(self, base_image: str = "python:3.11-slim"):
+        self.client = docker.from_env()
+        self.base_image = base_image
 
-def generate_contextual_chunk(doc_context: str, chunk_text: str) -> str:
-    """
-    원본 문서의 전역 맥락을 활용하여 개별 청크에 문맥 정보를 주입합니다.
-    """
-    prompt = f"""
-    다음은 전체 문서의 요약 맥락입니다:
-    <document_context>
-    {doc_context}
-    </document_context>
+    def run_agent_task(self, repo_path: str, issue_prompt: str) -> Dict[str, Any]:
+        """
+        격리된 Docker 컨테이너 안에서 에이전트 작업을 수행하고 결과를 반환합니다.
+        """
+        container = None
+        try:
+            # 컨테이너 생성: 자원 제한 및 네트워크 격리 적용
+            container = self.client.containers.create(
+                image=self.bas
 
-    다음은 문서에서 추출한 개별 청크입니다:
-    <chunk_text>
-    {chunk_text}
-    </chunk_text>
-
-    이 청크가 전체 문서에서 어떤 의미를 갖는지 명확하게 설명하는 문맥 정보를 청크 상단에 추가하여, 
-    독립적으로 검색되더라도 원본 문맥을 완벽히 유추할 수 있도록 수정된 청크를 작성해주세요.
-    """
-    
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.1
-    )
-    return response.choices[0].message.content
-```
-
-이 방식을 적용하면, 독립된 개별 청크가 벡터 DB에 저장되더라도 검색 시점에 문서 전체의 흐름을 반영한 높은 정확도의 유사도 매칭이 가능해집니다.
-
----
-
-### 2. GraphRAG 아키텍처와 엔티티(Entity)·관계(Relationship) 추출
-
-Contextual Chunking이 로컬(Local) 검색의 정확도를 높여준다면, **GraphRAG**는 문서 내의 주요 개념(Entities)과 이들 간의 관계(Relationships)를 네트워크 형태로 시각화 및 구조화하여 글로벌 검색 성능을 비약적으로 향상시킵니다.
-
-Neo4j나 NetworkX와 같은 그래프 데이터베이스를 활용하여 텍스트로부터 노드와 엣지를 추출하고, 이를 벡터 스토어와 결합하는 파이프라인의 핵심 구조를 구현해 보겠습니다.
-
-```python
-import ne
-
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-21-daily-ai-tech-update.md))*
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-10-22-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 65개)
+## 📝 전체 발행 포스트 목록 (총 66개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-10-22 | [SWE-bench 기반 에이전트 평가 자동화 파이프라인: LLM-as-a-Judge와 샌드박스 격리 환경을 활용한 프로덕션급 벤치마크 구축 실전 가이드](_posts/2026-10-22-daily-ai-tech-update.md) | 현대 소프트웨어 엔지니어링 생태계에서 LLM 기반 코딩 에이전트는 단순한 코드 자동완성 도구를 넘어 실제 복잡한 코드베이스의 버그를 수정하고 기능 개발을 수행하는 자율 시스템으로 진화하고 있습니다. 그러나 챗봇 형태의 정성적인 평가만으로는 에이전트가 실제 프로덕션 환경의 복잡한 소프트웨어 공학 문제를 해결할 수 있는지 객관적으로 검증하기 어렵습니다. |
 | 2026-10-21 | [GraphRAG와 Contextual Chunking을 결합한 차세대 엔터프라이즈 RAG 아키텍처: 의미론적 지식 그래프와 하이브리드 검색 구현 실전 가이드](_posts/2026-10-21-daily-ai-tech-update.md) | 현대 엔터프라이즈 환경에서 레거시 RAG(Retrieval-Augmented Generation) 시스템은 여전히 강력한 도구이지만, 복잡하게 얽힌 문서 간의 관계를 파악하고 전역적(Global)인 질문에 답변하는 과정에서 구조적인 한계에 부딪히고 있습니다. 단순한 의미 기반 벡터 검색(Vector Similarity Search)은 문서의 파편화된 ... |
 | 2026-10-19 | [Direct Preference Optimization(DPO)와 TRL 기반 정렬 학습: RLHF의 복잡성을 걷어낸 초경량 LLM 인간 피드백 최적화 파이프라인 구축](_posts/2026-10-19-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)을 개발할 때 베이스 모델의 사전 학습(Pre-training)과 지시 미세조정(Supervised Fine-Tuning, SFT)만으로는 사용자의 복잡한 의도, 안전성 기준, 스타일 선호도를 완벽히 반영하기 어렵습니다. 과거에는 이를 해결하기 위해 강화학습 기반의 RLHF(Reinforcement Learning from H... |
 | 2026-10-18 | [Apple MLX와 LoRA 파인튜닝을 활용한 맥북(Apple Silicon) 온디바이스 커스텀 LLM 학습 파이프라인 실전 구축](_posts/2026-10-18-daily-ai-tech-update.md) | 대규모 언어 모델(LLM)의 파인튜닝은 전통적으로 고가의 고성능 엔터프라이즈 GPU 클러스터와 수많은 VRAM을 요구하는 무거운 작업으로 여겨졌습니다. 하지만 Apple Silicon(M1/M2/M3/M4) 프로세서의 통합 메모리(Unified Memory) 구조와 애플이 직접 개발한 머신러닝 프레임워크인 MLX의 등장으로 개발 환경은 완전히 새로운 ... |
