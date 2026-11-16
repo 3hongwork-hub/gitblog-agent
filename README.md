@@ -9,70 +9,74 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [VectorRT와 TensorRT-LLM 기반 초저지연 벡터 검색 파이프라인: 실시간 임베딩 생성부터 HNSW 인덱싱 최적화까지 실전 가이드](_posts/2026-11-14-daily-ai-tech-update.md)
-- **작성일**: `2026-11-14`
-- **카테고리**: `AI, VectorSearch` | **태그**: `Antigravity`
+### 📌 [Apple MLX와 LoRA 기반 온디바이스 에이전트 미세조정: M계열 실리콘 맥북에서 사내 특화 LLM 구축하기](_posts/2026-11-16-daily-ai-tech-update.md)
+- **작성일**: `2026-11-16`
+- **카테고리**: `AI, On-Device` | **태그**: `Antigravity`
 
-> **핵심 요약**: 현대 대규모 언어 모델(LLM) 애플리케이션과 실시간 추천 시스템에서 벡터 검색(Vector Search)은 시스템의 전반적인 응답 속도와 사용자 경험을 좌우하는 핵심 인프라로 자리 잡았습니다. 수천만에서 수억 개의 고차원 임베딩 벡터를 다루는 엔터프라이즈 환경에서는 단순히 정확한 유사도 검색을 수행하는 것을 넘어, 밀리초(ms) 단위의 초저지연(Ul...
+> **핵심 요약**: 클라우드 기반의 대형 언어 모델(LLM)은 뛰어난 범용성을 자랑하지만, 사내 보안 규정, 민감한 데이터 처리, 그리고 네트워크 지연 문제로 인해 온디바이스(On-Device) AI 에이전트 구축에 대한 수요가 급증하고 있습니다. 특히 Apple Silicon(M1/M2/M3/M4) 프로세서는 통합 메모리 아키텍처(Unified Memory Archit...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-현대 대규모 언어 모델(LLM) 애플리케이션과 실시간 추천 시스템에서 벡터 검색(Vector Search)은 시스템의 전반적인 응답 속도와 사용자 경험을 좌우하는 핵심 인프라로 자리 잡았습니다. 수천만에서 수억 개의 고차원 임베딩 벡터를 다루는 엔터프라이즈 환경에서는 단순히 정확한 유사도 검색을 수행하는 것을 넘어, 밀리초(ms) 단위의 초저지연(Ultra-low latency) 처리가 필수적입니다. 
+클라우드 기반의 대형 언어 모델(LLM)은 뛰어난 범용성을 자랑하지만, 사내 보안 규정, 민감한 데이터 처리, 그리고 네트워크 지연 문제로 인해 온디바이스(On-Device) AI 에이전트 구축에 대한 수요가 급증하고 있습니다. 특히 Apple Silicon(M1/M2/M3/M4) 프로세서는 통합 메모리 아키텍처(Unified Memory Architecture)를 채택하고 있어, GPU VRAM의 물리적 용량 제한에서 비교적 자유롭게 대용량 모델을 로드하고 구동할 수 있습니다. 
 
-기존의 CPU 기반 벡터 데이터베이스나 전통적인 인덱싱 방식은 대규모 트래픽이 몰리는 프로덕션 환경에서 병목현상을 일으키기 쉽습니다. 이에 따라 GPU의 병렬 연산 능력을 극대화하여 임베딩 생성부터 인덱스 탐색까지 파이프라인 전체를 가속화하는 아키텍처에 대한 수요가 급증하고 있습니다. 본 포스트에서는 NVIDIA TensorRT-LLM과 VectorRT 가속 엔진을 결합하여, 초저지연 벡터 검색 파이프라인을 프로덕션 환경에 구축하는 실전 아키텍처와 구체적인 구현 방안을 심도 있게 다룹니다.
-
----
-
-### 1. 엔터프라이즈 벡터 검색의 병목과 GPU 가속 아키텍처의 필요성
-
-전통적인 벡터 검색 파이프라인은 텍스트나 이미지 데이터를 입력받아 임베딩 모델(예: BERT, BGE, E5 등)을 통해 벡터로 변환(Embedding Generation)한 뒤, 이를 벡터 데이터베이스(예: Milvus, Qdrant, Pinecone 등)에 저장하고 HNSW(Hierarchical Navigable Small World)나 IVF(Inverted File) 알고리즘을 통해 유사도 검색을 수행합니다.
-
-이 과정에서 발생하는 주요 병목은 크게 두 가지입니다. 첫째는 **임베딩 추론 지연(Inference Latency)**입니다. 일반적인 PyTorch 환경에서 모델을 서빙할 경우 GPU 메모리 대역폭 활용이 비효율적이며 런타임 오버헤드가 발생합니다. 둘째는 **메모리 I/O 병목**입니다. CPU와 GPU 간의 데이터 전송 및 벡터 데이터베이스 내에서의 인덱스 탐색 과정에서 PCIe 대역폭이 포화 상태에 이를 수 있습니다.
-
-```
-[Client Request] 
-       │
-       ▼
-[TensorRT-LLM Embedding Engine] (GPU Accelerated)
-       │ (High-bandwidth TensorRT Buffer)
-       ▼
-[VectorRT HNSW Index Engine] (GPU-Resident Graph Traversal)
-       │
-       ▼
-[Top-K Results & Metadata]
-```
-
-VectorRT와 TensorRT-LLM을 결합한 아키텍처는 데이터가 CPU 메모리로 내려가지 않고 GPU VRAM 내부에서 파이프라인 형태로 처리되도록 설계됩니다. 임베딩 모델은 TensorRT를 통해 엔진 레벨로 컴파일되어 최대의 처리량(Throughput)을 내고, 생성된 벡터는 즉시 GPU 상주(GPU-resident) HNSW 인덱스로 전달되어 그래프 탐색이 수행됩니다. 이를 통해 End-to-End 지연 시간을 기존 대비 최대 70% 이상 단축할 수 있습니다.
+이번 포스트에서는 Apple이 직접 개발한 머신러닝 프레임워크인 **MLX**와 파라미터 효율적 미세조정 기법인 **LoRA(Low-Rank Adaptation)**를 결합하여, 로컬 맥북 환경에서 사내 도메인 특화 LLM을 효율적으로 학습시키고 배포하는 파이프라인의 전 과정 실전 가이드를 공유합니다.
 
 ---
 
-### 2. TensorRT-LLM을 활용한 고성능 임베딩 모델 컴파일 및 서빙
+### 1. Apple MLX 아키텍처와 통합 메모리 구조의 이해
 
-초저지연 벡터 검색 파이프라인의 첫 번째 단계는 입력 데이터를 고속으로 벡터화하는 것입니다. PyTorch로 학습된 임베딩 모델을 NVIDIA TensorRT-LLM 형식으로 변환하고, 융합된 커널(Fused Kernels)과 FP8/INT8 양자화를 적용하여 연산 속도를 극대화합니다.
+전통적인 머신러닝 프레임워크인 PyTorch나 TensorFlow는 CPU와 GPU(CUDA) 간의 명시적인 메모리 복사(`cuda()`, `to('device')`) 과정이 필요합니다. 반면, Apple MLX는 NumPy와 유사한 파이썬ic한 API를 제공하면서도, Apple Silicon의 CPU, GPU, 그리고 신경망 처리 장치(ANE)가 **통합 메모리를 공유**하도록 설계되었습니다.
 
-아래는 HuggingFace의 임베딩 모델을 TensorRT 엔진으로 빌드하고 파이썬 환경에서 추론을 수행하는 최적화된 설정 코드입니다.
+* **지연 평가(Lazy Evaluation):** MLX는 연산 그래프를 즉시 실행하지 않고 지연 평가하여, 컴파일러가 전체 연산 체인을 최적화한 뒤 한 번에 실행합니다. 이는 메모리 대역폭을 극대화하여 모바일 및 데스크톱 칩의 효율성을 극대화합니다.
+* **통합 메모리의 이점:** 32GB 또는 64GB 통합 메모리를 탑재한 맥북 프로 환경에서는 7B~8B 규모의 파라미터를 가진 오픈소스 LLM(예: Llama 3 또는 Mistral 계열)을 별도의 고가의 외장 GPU 서버 없이도 원활하게 파인튜닝할 수 있습니다.
+
+---
+
+### 2. MLX LM을 활용한 데이터셋 준비 및 LoRA 설정
+
+온디바이스 미세조정을 시작하기 앞서, 사내 문서나 도메인 지식에 맞춘 JSONL 형태의 학습 데이터셋을 준비해야 합니다. MLX 진영에서 제공하는 공식 툴킷인 `mlx-lm`을 활용하면 몇 줄의 설정만으로 효율적인 LoRA 학습이 가능합니다.
+
+우선 필요한 라이브러리를 설치합니다.
+
+```bash
+pip install mlx mlx-lm
+```
+
+학습에 사용할 도메인 데이터셋(`train.jsonl`)은 다음과 같은 구조로 준비합니다.
+
+```json
+{"text": "질문: 사내 클라우드 인프라 배포 명령어는 무엇인가요?\n답변: 사내 클라우드 배포는 `deploy-cli prod up` 명령어를 통해 수행할 수 있습니다."}
+{"text": "질문: 시니어 개발자 온보딩 문서 위치는 어디인가요?\n답변: 온보딩 문서는 노션 'Engineering Wiki/Onboarding' 페이지에 정리되어 있습니다."}
+```
+
+---
+
+### 3. 실전 파이썬 코드: MLX 기반 LoRA 파인튜닝 자동화 파이프라인
+
+아래 코드는 `mlx-lm` 라이브러리를 활용하여 기본 모델을 다운로드하고, LoRA 어댑터를 적용하여 사내 도메인 데이터로 학습을 수행한 뒤, 최종 양자화(Quantization) 모델로 내보내는(Export) 전체 파이썬 스크립트입니다.
 
 ```python
-import tensorrt as trt
-import torch
-from transformers import AutoTokenizer
+import os
+from mlx_lm import lora, generate
+from mlx_lm.tuner.utils import load_model_and_tokenizer
 
-# TensorRT 로깅 설정
-TRT_LOGGER = trt.Logger(trt.Logger.WARNING)
+def run_mlx_lora_training():
+    # 1. 설정 파라미터 정의
+    model_path = "mlx-community/Meta-Llama-3-8B-Instruct-4bit" # 미리 양자화된 베이스 모델 활용
+    data_dir = "./data" # train.jsonl과 valid.jsonl이 위치한 
 
-def build_e
-
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-11-14-daily-ai-tech-update.md))*
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-11-16-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 78개)
+## 📝 전체 발행 포스트 목록 (총 79개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-11-16 | [Apple MLX와 LoRA 기반 온디바이스 에이전트 미세조정: M계열 실리콘 맥북에서 사내 특화 LLM 구축하기](_posts/2026-11-16-daily-ai-tech-update.md) | 클라우드 기반의 대형 언어 모델(LLM)은 뛰어난 범용성을 자랑하지만, 사내 보안 규정, 민감한 데이터 처리, 그리고 네트워크 지연 문제로 인해 온디바이스(On-Device) AI 에이전트 구축에 대한 수요가 급증하고 있습니다. 특히 Apple Silicon(M1/M2/M3/M4) 프로세서는 통합 메모리 아키텍처(Unified Memory Archit... |
 | 2026-11-14 | [VectorRT와 TensorRT-LLM 기반 초저지연 벡터 검색 파이프라인: 실시간 임베딩 생성부터 HNSW 인덱싱 최적화까지 실전 가이드](_posts/2026-11-14-daily-ai-tech-update.md) | 현대 대규모 언어 모델(LLM) 애플리케이션과 실시간 추천 시스템에서 벡터 검색(Vector Search)은 시스템의 전반적인 응답 속도와 사용자 경험을 좌우하는 핵심 인프라로 자리 잡았습니다. 수천만에서 수억 개의 고차원 임베딩 벡터를 다루는 엔터프라이즈 환경에서는 단순히 정확한 유사도 검색을 수행하는 것을 넘어, 밀리초(ms) 단위의 초저지연(Ul... |
 | 2026-11-10 | [SGLang과 RadixAttention 기반의 초고속 LLM 추론 서빙 아키텍처: 접두사 캐싱과 멀티턴 대화 최적화 실전 가이드](_posts/2026-11-10-daily-ai-tech-update.md) | 현대 대형 언어 모델(LLM) 프로덕션 환경에서 인프라 엔지니어들과 AI 플랫폼 팀이 직면하는 가장 큰 과제 중 하나는 서빙 비용 절감과 응답 지연 시간(Latency)의 극단적인 최소화입니다. 특히 멀티턴(Multi-turn) 대화 인터페이스, 에이전트 워크플로우, 그리고 복잡한 시스템 프롬프트가 반복되는 엔터프라이즈 환경에서는 동일한 컨텍스트가 매... |
 | 2026-11-09 | [DuckDB와 Apache Arrow 기반의 초고속 온프레미스 Text-to-SQL 분석 에이전트 구축: 메모리 최적화 및 시맨틱 쿼리 레이어 실전 가이드](_posts/2026-11-09-daily-ai-tech-update.md) | 기업의 데이터 규모가 폭발적으로 증가함에 따라, 데이터 분석가나 비즈니스 사용자(BA)들은 필요한 인사이트를 얻기 위해 복잡한 SQL 쿼리를 직접 작성하거나, 비용이 비싼 클라우드 데이터 웨어하우스(Snowflake, BigQuery 등)에 전적으로 의존해왔습니다. 최근 LLM 기반의 Text-to-SQL 에이전트가 이러한 장벽을 낮추고 있지만, 프로... |
