@@ -9,69 +9,64 @@
 
 ## 🔥 최신 생성 포스트 (Latest Content)
 
-### 📌 [DSPy 2.6과 멀티 스테이지 Teleprompter를 활용한 프로덕션급 프롬프트 컴파일러 구축: 수작업 프롬프트 엔지니어링의 종말](_posts/2026-11-19-daily-ai-tech-update.md)
-- **작성일**: `2026-11-19`
-- **카테고리**: `AI, Architecture` | **태그**: `Antigravity`
+### 📌 [GraphRAG와 Hybrid Search를 결합한 엔터프라이즈 지식 그래프 기반 RAG 아키텍처: 의미적 관계 추론과 키워드 검색의 융합](_posts/2026-11-22-daily-ai-tech-update.md)
+- **작성일**: `2026-11-22`
+- **카테고리**: `AI, RAG Architecture` | **태그**: `Antigravity`
 
-> **핵심 요약**: AI 엔지니어링의 발전 속도는 눈부시게 빠르지만, 여전히 많은 현업 프로젝트에서 가장 큰 병목 중 하나는 '프롬프트 엔지니어링'입니다. 대형 언어 모델(LLM)의 미세한 지시어 변경이나 예시(Few-shot) 추가에 따라 파이프라인의 전체 성능이 널리 출렁이기 때문에, 개발자들은 경험적 직관에 의존해 프롬프트를 수십 번 수정하는 소모적인 작업을 반복하...
+> **핵심 요약**: 현대의 대규모 언어 모델(LLM) 기반 응용 프로그램에서 전통적인 벡터 검색(Vector Search) 기반의 RAG(Retrieval-Augmented Generation) 시스템은 사내 문서나 방대한 지식 베이스를 다루는 데 있어 핵심적인 역할을 해왔습니다. 그러나 단순히 텍스트를 고정된 크기의 청크(Chunk)로 나누어 임베딩 벡터로 변환하고 유...
 
 <details>
 <summary><b>📖 최신 포스트 본문 미리보기 (클릭하여 열기/접기)</b></summary>
 
-AI 엔지니어링의 발전 속도는 눈부시게 빠르지만, 여전히 많은 현업 프로젝트에서 가장 큰 병목 중 하나는 '프롬프트 엔지니어링'입니다. 대형 언어 모델(LLM)의 미세한 지시어 변경이나 예시(Few-shot) 추가에 따라 파이프라인의 전체 성능이 널리 출렁이기 때문에, 개발자들은 경험적 직관에 의존해 프롬프트를 수십 번 수정하는 소모적인 작업을 반복하곤 합니다.
+현대의 대규모 언어 모델(LLM) 기반 응용 프로그램에서 전통적인 벡터 검색(Vector Search) 기반의 RAG(Retrieval-Augmented Generation) 시스템은 사내 문서나 방대한 지식 베이스를 다루는 데 있어 핵심적인 역할을 해왔습니다. 그러나 단순히 텍스트를 고정된 크기의 청크(Chunk)로 나누어 임베딩 벡터로 변환하고 유사도 검색을 수행하는 방식은 고유한 한계를 지니고 있습니다. 문서 간의 숨겨진 맥락적 관계, 전역적(Global) 주제 요약, 그리고 서로 다른 문서에 분산된 개체(Entity)들 간의 복잡한 연결 고리를 파악하는 데는 치명적인 약점이 드러납니다.
 
-이러한 문제를 해결하기 위해 등장한 프레임워크가 바로 **DSPy**입니다. DSPy는 프롬프트를 문자열(String)이 아닌, **파이썬 코드로 선언된 모듈(Module)과 최적화 가능한 시그니처(Signature)의 조합**으로 다룹니다. 오늘 포스트에서는 최신 DSPy 2.6을 활용해, 수작업 프롬프트 작성에서 벗어나 데이터 기반으로 프롬프트와 Few-shot 예시를 자동 컴파일하는 멀티 스테이지 텔레프로ンプ터(Teleprompter) 파이프라인 구축 방법을 실전 코드와 함께 상세히 다루어 보겠습니다.
-
----
-
-### 1. 전통적 프롬프트 엔지니어링의 한계와 DSPy 패러다임 전환
-
-전통적인 방식의 LLM 애플리케이션 개발은 프롬프트 문자열을 하드코딩하고, 모델이 바뀔 때마다(예: GPT-4에서 Claude 3.5 Sonnet으로 전환) 프롬프트를 처음부터 다시 튜닝해야 하는 유지보수 지옥을 동반합니다. 
-
-```
-[전통적 방식]
-User Request -> Hardcoded Prompt String + LLM -> Unpredictable Output -> Manual Prompt Tweaking
-
-[DSPy 컴파일러 방식]
-User Request -> Pythonic Signature & Modules -> Teleprompter Optimization (MIPROv2) -> Compiled Optimal Prompt
-```
-
-DSPy는 이 과정을 머신러닝의 학습(Training) 개념으로 전환합니다. 개발자는 무엇(What)을 할 것인지에 대한 **시그니처(Signature)**와 작업의 성공 여부를 판단하는 **메트릭(Metric)** 함수만 정의하면 됩니다. 이후 **텔레프로ンプ터(Teleprompter)**라 불리는 컴파일러 엔진이 검증 데이터셋(Evaluation Dataset)을 활용해 최적의 지시어와 Few-shot 예시 조합을 자동으로 탐색하고 최적화(Compile)합니다.
+오늘 포스트에서는 이러한 전통적 벡터 RAG의 한계를 극복하기 위해 제안된 **GraphRAG(지식 그래프 기반 RAG)** 아키텍처와 **Hybrid Search(하이브리드 검색)**를 결합하여, 엔터프라이즈 환경에서 정밀하고 거시적인 맥락 추론이 모두 가능한 차세대 지식 검색 파이프라인을 구축하는 실전 방법을 상세히 다루겠습니다.
 
 ---
 
-### 2. DSPy 2.6 시그니처 및 모듈 구조 설계
+### 1. 전통적 벡터 RAG의 한계와 GraphRAG의 등장 배경
 
-실제 프로덕션 환경에서 복잡한 문서 분석 및 요약 에이전트를 구축한다고 가정해 봅시다. 입력된 엔터프라이즈 리포트를 분석하여 핵심 인사이트와 리스크 요인을 추출하는 파이프라인을 DSPy 시그니처로 선언합니다.
+기존의 벡터 RAG 파이프라인은 텍스트를 청킹(Chunking)하고, 이를 임베딩 모델을 통해 벡터 공간에 매핑한 뒤 코사인 유사도 등을 통해 상위 $K$개의 청크를 가져오는 방식을 취합니다. 이 방식은 특정 사실(Fact)이 명시적으로 서술된 단편적인 정보를 찾는 데는 매우 훌륭합니다. 하지만 다음과 같은 질문에는 무력해집니다.
+
+* *"우리 회사의 지난 3년간 프로젝트 A와 제품 B 간의 기술적 아키텍처 변화를 관통하는 핵심 공통 원인은 무엇인가?"*
+* *"부서별로 흩어져 있는 문서들 속에서 특정 기술 스택(예: Kubernetes)을 도입했을 때 파급되는 연쇄적인 조직 및 시스템 영향도는 어떻게 되는가?"*
+
+이러한 질문들은 단순한 문장 단위의 유사도로는 해결할 수 없습니다. **GraphRAG**는 문서 내의 개체(사람, 조직, 기술, 개념 등)와 이들 간의 관계(Relationship)를 추출하여 **지식 그래프(Knowledge Graph)**를 구축하고, 커뮤니티 검출(Community Detection) 알고리즘을 통해 거시적 구조와 미시적 세부 사항을 동시에 포착합니다. 여기에 키워드 기반의 BM25 검색과 벡터 검색을 결합한 **Hybrid Search**를 더하면, 정확한 명칭 매칭과 의미적 유사성을 동시에 만족하는 궁극의 검색 엔진을 완성할 수 있습니다.
+
+---
+
+### 2. Neo4j와 Vector DB를 활용한 하이브리드 지식 그래프 스토리지 설계
+
+엔터프라이즈 프로덕션 환경에서 GraphRAG를 구현하려면 그래프 데이터베이스와 벡터 데이터베이스의 장점을 모두 취해야 합니다. Neo4j는 강력한 그래프 쿼리 언어(Cypher)와 벡터 인덱싱 기능을 동시에 제공하므로 GraphRAG 구축을 위한 최적의 인프라입니다.
+
+아래는 문서에서 개체와 관계를 추출하여 Neo4j에 저장하고, 동시에 벡터 임베딩을 결합하여 하이브리드 검색을 수행하는 Python 기반의 핵심 파이프라인 아키텍처 예시입니다.
 
 ```python
-import dspy
-from dspy.teleprompt import BootstrapFewShotWithRandomSearch, MIPROv2
+import os
+from neo4j import GraphDatabase
+from sentence_transformers import SentenceTransformer
+from typing import List, Dict, Any
 
-# 1. LLM 및LM 클라이언트 설정 (예: Anthropic Claude 3.5 Sonnet 연동)
-# 환경 변수에 ANTHROPIC_API_KEY가 설정되어 있다고 가정합니다.
-llm = dspy.LM('anthropic/claude-3-5-sonnet-20241022', temperature=0.2, max_tokens=1500)
-dspy.configure(lm=llm)
+class EnterpriseGraphRAGStore:
+    def __init__(self, uri: str, user: str, pass_: str):
+        self.driver = GraphDatabase.driver(uri, auth=(user, pass_))
+        # 고성능 임베딩 모델 로드 (한국어 특화 임베딩 모델 가정)
+        self.encoder = SentenceTransformer("snunlp/KR-SBERT-V40k-klue-nli-auglt")
 
-# 2. 커스텀 시그니처 정의 (입출력 스키마 명시)
-class ExtractEnterpriseInsights(dspy.Signature):
-    """엔터프라이즈 비즈니스 리포트를 분석하여 핵심 인사이트와 잠재 리스크를 구조화된 형태로 추출합니다."""
-    
-    document_text: str = dspy.InputField(desc="분석할 원본 비즈니스 리포트 텍스트")
-    industry_domain: str = dspy.InputField(desc="해당 기업의 비즈니스 도메인 (예: 금융, 헬스케어, SaaS)")
-    
-    key_insights: list[str] = dspy.OutputField(desc="리포
+    def close(self):
+      
 
-*(이하 생략 ... [전체 포스트 읽기](_posts/2026-11-19-daily-ai-tech-update.md))*
+*(이하 생략 ... [전체 포스트 읽기](_posts/2026-11-22-daily-ai-tech-update.md))*
 
 </details>
 
 ---
 
-## 📝 전체 발행 포스트 목록 (총 80개)
+## 📝 전체 발행 포스트 목록 (총 81개)
 
 | 작성일 | 제목 | 주요 내용 요약 |
 | :--- | :--- | :--- |
+| 2026-11-22 | [GraphRAG와 Hybrid Search를 결합한 엔터프라이즈 지식 그래프 기반 RAG 아키텍처: 의미적 관계 추론과 키워드 검색의 융합](_posts/2026-11-22-daily-ai-tech-update.md) | 현대의 대규모 언어 모델(LLM) 기반 응용 프로그램에서 전통적인 벡터 검색(Vector Search) 기반의 RAG(Retrieval-Augmented Generation) 시스템은 사내 문서나 방대한 지식 베이스를 다루는 데 있어 핵심적인 역할을 해왔습니다. 그러나 단순히 텍스트를 고정된 크기의 청크(Chunk)로 나누어 임베딩 벡터로 변환하고 유... |
 | 2026-11-19 | [DSPy 2.6과 멀티 스테이지 Teleprompter를 활용한 프로덕션급 프롬프트 컴파일러 구축: 수작업 프롬프트 엔지니어링의 종말](_posts/2026-11-19-daily-ai-tech-update.md) | AI 엔지니어링의 발전 속도는 눈부시게 빠르지만, 여전히 많은 현업 프로젝트에서 가장 큰 병목 중 하나는 '프롬프트 엔지니어링'입니다. 대형 언어 모델(LLM)의 미세한 지시어 변경이나 예시(Few-shot) 추가에 따라 파이프라인의 전체 성능이 널리 출렁이기 때문에, 개발자들은 경험적 직관에 의존해 프롬프트를 수십 번 수정하는 소모적인 작업을 반복하... |
 | 2026-11-16 | [Apple MLX와 LoRA 기반 온디바이스 에이전트 미세조정: M계열 실리콘 맥북에서 사내 특화 LLM 구축하기](_posts/2026-11-16-daily-ai-tech-update.md) | 클라우드 기반의 대형 언어 모델(LLM)은 뛰어난 범용성을 자랑하지만, 사내 보안 규정, 민감한 데이터 처리, 그리고 네트워크 지연 문제로 인해 온디바이스(On-Device) AI 에이전트 구축에 대한 수요가 급증하고 있습니다. 특히 Apple Silicon(M1/M2/M3/M4) 프로세서는 통합 메모리 아키텍처(Unified Memory Archit... |
 | 2026-11-14 | [VectorRT와 TensorRT-LLM 기반 초저지연 벡터 검색 파이프라인: 실시간 임베딩 생성부터 HNSW 인덱싱 최적화까지 실전 가이드](_posts/2026-11-14-daily-ai-tech-update.md) | 현대 대규모 언어 모델(LLM) 애플리케이션과 실시간 추천 시스템에서 벡터 검색(Vector Search)은 시스템의 전반적인 응답 속도와 사용자 경험을 좌우하는 핵심 인프라로 자리 잡았습니다. 수천만에서 수억 개의 고차원 임베딩 벡터를 다루는 엔터프라이즈 환경에서는 단순히 정확한 유사도 검색을 수행하는 것을 넘어, 밀리초(ms) 단위의 초저지연(Ul... |
